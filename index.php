@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shine — Minimal Theme</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="announcement">
+  <div class="marquee-track" id="marquee">
+    <span>Free Shipping on Orders Over $60</span>
+    <span>Natural & Cruelty-Free Ingredients</span>
+    <span>New Arrivals — Spring Collection</span>
+    <span>Earn Points with Every Purchase</span>
+    <span>Free Shipping on Orders Over $60</span>
+    <span>Natural & Cruelty-Free Ingredients</span>
+    <span>New Arrivals — Spring Collection</span>
+    <span>Earn Points with Every Purchase</span>
+  </div>
+</div>
+
+<header>
+  <div class="header-inner">
+    <nav>
+      <a href="#">Shop</a>
+      <a href="#">Collections</a>
+      <a href="#">Rituals</a>
+      <a href="#">Journal</a>
+    </nav>
+    <div class="logo">Lumière</div>
+    <div class="header-actions">
+      <button>Search</button>
+      <button>Account</button>
+      <button class="cart-btn">
+        Cart
+        <span class="cart-count">2</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <span class="hero-eyebrow">New — Spring Collection 2026</span>
+    <h1 class="hero-title">Radiance<br><em>from within.</em></h1>
+    <p class="hero-sub">Artisan skincare rituals crafted with botanical extracts and pure mineral ingredients for your most luminous skin.</p>
+    <div class="hero-actions">
+      <button class="btn-primary">Shop the Edit</button>
+      <button class="btn-outline">Our Story</button>
+    </div>
+  </div>
+  <div class="hero-image">
+    <div class="hero-image-placeholder">
+      <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:.2">
+        <circle cx="60" cy="60" r="58" stroke="#8a7060" stroke-width="1"/>
+        <path d="M60 20 C60 20 40 50 40 65 C40 76 49 85 60 85 C71 85 80 76 80 65 C80 50 60 20 60 20Z" stroke="#8a7060" stroke-width="1" fill="none"/>
+        <path d="M60 35 C60 35 48 55 48 65 C48 72 53.4 78 60 78" stroke="#8a7060" stroke-width="1" fill="none"/>
+      </svg>
+      <div class="hero-badge">
+        <strong>4.9★</strong>
+        Over 12,000<br>happy customers
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="categories">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Explore</span>
+      <h2 class="section-title">Shop by <em>Category</em></h2>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card">
+        <div class="cat-img">
+          <div class="cat-img-bg cat-bg-1" style="height:420px"></div>
+        </div>
+        <div class="cat-label">
+          <div class="cat-label-tag">Skincare</div>
+          <div class="cat-label-name">Face Serums</div>
+        </div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-img">
+          <div class="cat-img-bg cat-bg-2" style="height:420px"></div>
+        </div>
+        <div class="cat-label">
+          <div class="cat-label-tag">Body</div>
+          <div class="cat-label-name">Body Rituals</div>
+        </div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-img">
+          <div class="cat-img-bg cat-bg-3" style="height:420px"></div>
+        </div>
+        <div class="cat-label">
+          <div class="cat-label-tag">Wellness</div>
+          <div class="cat-label-name">Facial Oils</div>
+        </div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-img">
+          <div class="cat-img-bg cat-bg-4" style="height:420px"></div>
+        </div>
+        <div class="cat-label">
+          <div class="cat-label-tag">Sets</div>
+          <div class="cat-label-name">Gift Bundles</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="featured">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Bestsellers</span>
+      <h2 class="section-title">Most <em>Loved</em></h2>
+    </div>
+    <div class="product-grid">
+      <div class="product-card">
+        <div class="product-img-wrap">
+          <div class="product-img prod-bg-1"></div>
+          <span class="badge-new">New</span>
+          <div class="product-actions">
+            <button>Wishlist</button>
+            <button class="add-cart">Add to Cart</button>
+          </div>
+        </div>
+        <div class="product-tag">Serum</div>
+        <div class="product-name">Glow Essence Serum</div>
+        <div class="product-price">$68.00</div>
+      </div>
+      <div class="product-card">
+        <div class="product-img-wrap">
+          <div class="product-img prod-bg-2"></div>
+          <span class="badge-sale">Sale</span>
+          <div class="product-actions">
+            <button>Wishlist</button>
+            <button class="add-cart">Add to Cart</button>
+          </div>
+        </div>
+        <div class="product-tag">Moisturiser</div>
+        <div class="product-name">Velvet Cloud Cream</div>
+        <div class="product-price"><s>$58.00</s>$44.00</div>
+      </div>
+      <div class="product-card">
+        <div class="product-img-wrap">
+          <div class="product-img prod-bg-3"></div>
+          <div class="product-actions">
+            <button>Wishlist</button>
+            <button class="add-cart">Add to Cart</button>
+          </div>
+        </div>
+        <div class="product-tag">Facial Oil</div>
+        <div class="product-name">Rosehip Gold Oil</div>
+        <div class="product-price">$82.00</div>
+      </div>
+      <div class="product-card">
+        <div class="product-img-wrap">
+          <div class="product-img prod-bg-4"></div>
+          <div class="product-actions">
+            <button>Wishlist</button>
+            <button class="add-cart">Add to Cart</button>
+          </div>
+        </div>
+        <div class="product-tag">Eye Care</div>
+        <div class="product-name">Luminous Eye Elixir</div>
+        <div class="product-price">$54.00</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="banner-strip">
+  <div class="banner-left">
+    <span class="banner-tag">Skincare Philosophy</span>
+    <h2 class="banner-title">Beauty<br><em>Rooted in</em><br>Nature</h2>
+    <p class="banner-sub">Every formula begins with ethically sourced botanicals, balanced with the precision of modern dermatology.</p>
+    <button class="banner-btn">Discover More</button>
+  </div>
+  <div class="banner-right">
+    <div class="banner-right-inner">
+      <span class="banner-tag">Limited Edition</span>
+      <h2 class="banner-title" style="margin:14px 0;">The Spring<br><em>Ritual Set</em></h2>
+      <p class="banner-sub" style="margin-bottom:28px">Four essential steps. One luminous ritual. Curated for the new season.</p>
+      <button class="banner-btn">Shop Now — $148</button>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Reviews</span>
+      <h2 class="section-title">What They're <em>Saying</em></h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"My skin has never looked this luminous. The Glow Serum is the one product I'd take to a desert island without question."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">S</div>
+          <div>
+            <div class="testi-name">Sophia M.</div>
+            <div class="testi-handle">Verified Customer</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"I tried everything for my dry skin. The Velvet Cloud Cream solved it in two weeks. I'm completely obsessed and have told everyone."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">A</div>
+          <div>
+            <div class="testi-name">Amara K.</div>
+            <div class="testi-handle">Verified Customer</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Sustainable, effective, beautifully packaged. Lumière is everything I want a clean beauty brand to be. Repeat customer forever."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">C</div>
+          <div>
+            <div class="testi-name">Clara B.</div>
+            <div class="testi-handle">Verified Customer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="journal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Wellness</span>
+      <h2 class="section-title">From the <em>Journal</em></h2>
+    </div>
+    <div class="journal-grid">
+      <div class="journal-card">
+        <div class="journal-img journal-img-large">
+          <div class="journal-img-bg j-bg-1"></div>
+        </div>
+        <div class="journal-category">Skincare Science</div>
+        <div class="journal-title">The Truth About Retinol: What Every Skin Type Needs to Know</div>
+        <div class="journal-meta">March 18, 2026 · 6 min read</div>
+      </div>
+      <div class="journal-card">
+        <div class="journal-img">
+          <div class="journal-img-bg j-bg-2"></div>
+        </div>
+        <div class="journal-category">Morning Rituals</div>
+        <div class="journal-title">A 5-Step Morning Routine for Glass Skin</div>
+        <div class="journal-meta">March 10, 2026 · 4 min read</div>
+      </div>
+      <div class="journal-card">
+        <div class="journal-img">
+          <div class="journal-img-bg j-bg-3"></div>
+        </div>
+        <div class="journal-category">Sustainability</div>
+        <div class="journal-title">Why We Chose Glass Packaging Over Plastic</div>
+        <div class="journal-meta">February 28, 2026 · 3 min read</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="newsletter">
+  <span class="section-tag">Stay in Touch</span>
+  <h2 class="section-title">Join the <em>Ritual</em></h2>
+  <p>Subscribe for exclusive offers, skincare tips, and early access to new arrivals.</p>
+  <div class="newsletter-form">
+    <input type="email" placeholder="Your email address">
+    <button>Subscribe</button>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">Lumière</div>
+      <p class="footer-desc">Clean, botanical skincare rooted in nature and crafted for your most radiant self. Cruelty-free, sustainably sourced.</p>
+      <div class="footer-social">
+        <a class="social-link" href="#">ig</a>
+        <a class="social-link" href="#">fb</a>
+        <a class="social-link" href="#">tk</a>
+        <a class="social-link" href="#">pi</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-heading">Shop</div>
+      <div class="footer-links">
+        <a href="#">New Arrivals</a>
+        <a href="#">Bestsellers</a>
+        <a href="#">Skincare</a>
+        <a href="#">Body Care</a>
+        <a href="#">Gift Sets</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-heading">Help</div>
+      <div class="footer-links">
+        <a href="#">FAQ</a>
+        <a href="#">Shipping & Returns</a>
+        <a href="#">Track Your Order</a>
+        <a href="#">Contact Us</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-heading">Company</div>
+      <div class="footer-links">
+        <a href="#">Our Story</a>
+        <a href="#">Ingredients</a>
+        <a href="#">Sustainability</a>
+        <a href="#">Journal</a>
+        <a href="#">Press</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Lumière Skincare. All rights reserved.</p>
+    <div class="payment-icons">
+      <span class="pay-icon">Visa</span>
+      <span class="pay-icon">MC</span>
+      <span class="pay-icon">Amex</span>
+      <span class="pay-icon">PayPal</span>
+      <span class="pay-icon">Shop Pay</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
