@@ -61,7 +61,7 @@
   </div>
   <div class="hero-image">
   <div class="hero-image-placeholder" style="padding: 60px;">
-    <img src="img/bg.png" alt="Featured Perfume Collection" style="width: 110%; height: 115%; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+    <img src="../assets/bg.png" alt="Featured Perfume Collection" style="width: 110%; height: 115%; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
     <div class="hero-badge" style="bottom: 10px; left: 10px;">
       <strong>4.9★</strong>
       Over 12,000<br>happy customers
