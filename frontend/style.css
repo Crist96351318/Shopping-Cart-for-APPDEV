@@ -435,3 +435,26 @@
     .newsletter-form input { border-right: 1px solid rgba(255,255,255,.18); border-bottom: none; }
     .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
   }
+
+/* ── LOGIN / SIGNUP ── */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.password-wrapper input {
+    padding-right: 40px; 
+}
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    cursor: pointer;
+    color: var(--taupe);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+.toggle-password:hover {
+    color: var(--dark);
+}
