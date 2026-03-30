@@ -27,6 +27,7 @@
 <header>
   <div class="header-inner">
     <nav>
+      <a href="index.php">Home</a>
       <a href="fragrances.php">Fragrances</a>
       <a href="collections.php">Collections</a>
       <a href="gifts.php">Gifts</a>
@@ -52,19 +53,16 @@
 <section class="hero">
   <div class="hero-content">
     <span class="hero-eyebrow">New Collection 2026</span>
-    <h1 class="hero-title">Smells<br><em>like Humot.</em></h1>
+    <h1 class="hero-title">Just like Men, Perfume is <br><em> Never Perfect Right Away; </em><br><em>You have to let it Seduce You.</em></h1>
     <p class="hero-sub">Masterfully blended fragrances crafted with rare aromatic notes and captivating essences for an unforgettable signature scent.</p>
     <div class="hero-actions">
       <button class="btn-primary">Shop Now!</button>
-      <button class="btn-outline">Our Story</button>
+      <a href="our_story.php" class="btn-outline" style="display: inline-flex; align-items: center; justify-content: center;">Our Story</a>
     </div>
   </div>
   <div class="hero-image">
   <div class="hero-image-placeholder" style="padding: 60px;">
     <img src="../assets/bg.png" alt="Featured Perfume Collection" style="width: 110%; height: 115%; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-    <div class="hero-badge" style="bottom: 10px; left: 10px;">
-      <strong>4.9★</strong>
-      Over 12,000<br>happy customers
     </div>
   </div>
 </div>
@@ -77,52 +75,58 @@
       <h2 class="section-title">Perfume <em>Categories</em></h2>
     </div>
     <div class="cat-grid">
-      <div class="cat-card">
-        <div class="cat-img">
-          <div class="cat-img-bg cat-bg-1" style="height:420px"></div>
-        </div>
-        <div class="cat-label">
-          <div class="cat-label-tag">Extrait de Parfum</div>
-          <div class="cat-label-name">20-40% Oil Concentration</div>
-        </div>
-      </div>
-      <div class="cat-card">
-        <div class="cat-img">
-          <div class="cat-img-bg cat-bg-2" style="height:420px"></div>
-        </div>
-        <div class="cat-label">
-          <div class="cat-label-tag">Eau de Parfum</div>
-          <div class="cat-label-name">10-20% Oil Concentration</div>
-        </div>
-      </div>
-      <div class="cat-card">
-        <div class="cat-img">
-          <div class="cat-img-bg cat-bg-3" style="height:420px"></div>
-        </div>
-        <div class="cat-label">
-          <div class="cat-label-tag">Eau de Toilette</div>
-          <div class="cat-label-name">5-15% Oil Concentration</div>
-        </div>
-      </div>
-      <div class="cat-card">
-        <div class="cat-img">
-          <div class="cat-img-bg cat-bg-4" style="height:420px"></div>
-        </div>
-        <div class="cat-label">
-          <div class="cat-label-tag">Eau de Cologne</div>
-          <div class="cat-label-name">2-4% Oil Concentration</div>
-        </div>
-      </div>
-      <div class="cat-card">
-        <div class="cat-img">
-          <div class="cat-img-bg cat-bg-4" style="height:420px"></div>
-        </div>
-        <div class="cat-label">
-          <div class="cat-label-tag">Eau Fraiche</div>
-          <div class="cat-label-name">1-3% Oil Concentration</div>
-        </div>
-      </div>
+
+  <div class="cat-card">
+    <div class="cat-img">
+      <img src="../assets/cat1.png" alt="Extrait de Parfum Collection">
     </div>
+    <div class="cat-label">
+      <div class="cat-label-tag">Extrait de Parfum</div>
+      <div class="cat-label-name">20-40% Concentration</div>
+    </div>
+  </div>
+
+  <div class="cat-card">
+    <div class="cat-img">
+      <img src="../assets/cat2.png" alt="Eau de Parfum Collection">
+    </div>
+    <div class="cat-label">
+      <div class="cat-label-tag">Eau de Parfum</div>
+      <div class="cat-label-name">15-20% Concentration</div>
+    </div>
+  </div>
+
+  <div class="cat-card">
+    <div class="cat-img">
+      <img src="../assets/cat3.png" alt="Eau de Toilette Collection">
+    </div>
+    <div class="cat-label">
+      <div class="cat-label-tag">Eau de Toilette</div>
+      <div class="cat-label-name">5-15% Concentration</div>
+    </div>
+  </div>
+
+  <div class="cat-card">
+    <div class="cat-img">
+      <img src="../assets/cat4.png" alt="Eau de Cologne Collection">
+    </div>
+    <div class="cat-label">
+      <div class="cat-label-tag">Eau de Cologne</div>
+      <div class="cat-label-name">2-5% Concentration</div>
+    </div>
+  </div>
+
+  <div class="cat-card">
+    <div class="cat-img">
+      <img src="../assets/cat5.png" alt="Eau Fraiche Collection">
+    </div>
+    <div class="cat-label">
+      <div class="cat-label-tag">Eau Fraiche</div>
+      <div class="cat-label-name">1-3% Concentration</div>
+    </div>
+  </div>
+
+</div>
   </div>
 </section>
 
