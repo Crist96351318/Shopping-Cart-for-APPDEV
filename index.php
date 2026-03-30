@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shine — Minimal Theme</title>
+<title>Le parfum Shop</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
@@ -13,28 +13,33 @@
 
 <div class="announcement">
   <div class="marquee-track" id="marquee">
-    <span>Free Shipping on Orders Over $60</span>
-    <span>Natural & Cruelty-Free Ingredients</span>
-    <span>New Arrivals — Spring Collection</span>
-    <span>Earn Points with Every Purchase</span>
-    <span>Free Shipping on Orders Over $60</span>
-    <span>Natural & Cruelty-Free Ingredients</span>
-    <span>New Arrivals — Spring Collection</span>
-    <span>Earn Points with Every Purchase</span>
+    <span>Complimentary Shipping Over $100</span>
+    <span>Discover Your Signature Scent</span>
+    <span>Free Sample Vials With Every Order</span>
+    <span>Artisan & Long-Lasting Fragrances</span>
+    <span>Complimentary Shipping Over $100</span>
+    <span>Discover Your Signature Scent</span>
+    <span>Free Sample Vials With Every Order</span>
+    <span>Artisan & Long-Lasting Fragrances</span>
   </div>
 </div>
 
 <header>
   <div class="header-inner">
     <nav>
-      <a href="#">Shop</a>
+      <a href="#">Fragrances</a>
       <a href="#">Collections</a>
-      <a href="#">Rituals</a>
-      <a href="#">Journal</a>
+      <a href="#">Gifts</a>
     </nav>
-    <div class="logo">Lumière</div>
+    <div class="logo">le parfum </div>
     <div class="header-actions">
-      <button>Search</button>
+     <button class="search-btn">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="8"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+  Search
+    </button>
       <button>Account</button>
       <button class="cart-btn">
         Cart
@@ -46,34 +51,30 @@
 
 <section class="hero">
   <div class="hero-content">
-    <span class="hero-eyebrow">New — Spring Collection 2026</span>
-    <h1 class="hero-title">Radiance<br><em>from within.</em></h1>
-    <p class="hero-sub">Artisan skincare rituals crafted with botanical extracts and pure mineral ingredients for your most luminous skin.</p>
+    <span class="hero-eyebrow">New Collection 2026</span>
+    <h1 class="hero-title">Smells<br><em>like Humot.</em></h1>
+    <p class="hero-sub">Masterfully blended fragrances crafted with rare aromatic notes and captivating essences for an unforgettable signature scent.</p>
     <div class="hero-actions">
-      <button class="btn-primary">Shop the Edit</button>
+      <button class="btn-primary">Shop Now!</button>
       <button class="btn-outline">Our Story</button>
     </div>
   </div>
   <div class="hero-image">
-    <div class="hero-image-placeholder">
-      <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:.2">
-        <circle cx="60" cy="60" r="58" stroke="#8a7060" stroke-width="1"/>
-        <path d="M60 20 C60 20 40 50 40 65 C40 76 49 85 60 85 C71 85 80 76 80 65 C80 50 60 20 60 20Z" stroke="#8a7060" stroke-width="1" fill="none"/>
-        <path d="M60 35 C60 35 48 55 48 65 C48 72 53.4 78 60 78" stroke="#8a7060" stroke-width="1" fill="none"/>
-      </svg>
-      <div class="hero-badge">
-        <strong>4.9★</strong>
-        Over 12,000<br>happy customers
-      </div>
+  <div class="hero-image-placeholder" style="padding: 60px;">
+    <img src="img/bg.png" alt="Featured Perfume Collection" style="width: 110%; height: 115%; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+    <div class="hero-badge" style="bottom: 10px; left: 10px;">
+      <strong>4.9★</strong>
+      Over 12,000<br>happy customers
     </div>
   </div>
+</div>
 </section>
 
 <section class="categories">
   <div class="container">
     <div class="section-header">
       <span class="section-tag">Explore</span>
-      <h2 class="section-title">Shop by <em>Category</em></h2>
+      <h2 class="section-title">Perfume <em>Categories</em></h2>
     </div>
     <div class="cat-grid">
       <div class="cat-card">
@@ -81,8 +82,8 @@
           <div class="cat-img-bg cat-bg-1" style="height:420px"></div>
         </div>
         <div class="cat-label">
-          <div class="cat-label-tag">Skincare</div>
-          <div class="cat-label-name">Face Serums</div>
+          <div class="cat-label-tag">Extrait de Parfum</div>
+          <div class="cat-label-name">20-40% Oil Concentration</div>
         </div>
       </div>
       <div class="cat-card">
@@ -90,8 +91,8 @@
           <div class="cat-img-bg cat-bg-2" style="height:420px"></div>
         </div>
         <div class="cat-label">
-          <div class="cat-label-tag">Body</div>
-          <div class="cat-label-name">Body Rituals</div>
+          <div class="cat-label-tag">Eau de Parfum</div>
+          <div class="cat-label-name">10-20% Oil Concentration</div>
         </div>
       </div>
       <div class="cat-card">
@@ -99,8 +100,8 @@
           <div class="cat-img-bg cat-bg-3" style="height:420px"></div>
         </div>
         <div class="cat-label">
-          <div class="cat-label-tag">Wellness</div>
-          <div class="cat-label-name">Facial Oils</div>
+          <div class="cat-label-tag">Eau de Toilette</div>
+          <div class="cat-label-name">5-15% Oil Concentration</div>
         </div>
       </div>
       <div class="cat-card">
@@ -108,8 +109,17 @@
           <div class="cat-img-bg cat-bg-4" style="height:420px"></div>
         </div>
         <div class="cat-label">
-          <div class="cat-label-tag">Sets</div>
-          <div class="cat-label-name">Gift Bundles</div>
+          <div class="cat-label-tag">Eau de Cologne</div>
+          <div class="cat-label-name">2-4% Oil Concentration</div>
+        </div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-img">
+          <div class="cat-img-bg cat-bg-4" style="height:420px"></div>
+        </div>
+        <div class="cat-label">
+          <div class="cat-label-tag">Eau Fraiche</div>
+          <div class="cat-label-name">1-3% Oil Concentration</div>
         </div>
       </div>
     </div>

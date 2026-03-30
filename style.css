@@ -19,6 +19,19 @@
   img { display: block; width: 100%; object-fit: cover; }
   button { cursor: pointer; border: none; background: none; font-family: var(--sans); }
 
+/* ── search icon ── */
+  .header-actions button { 
+  display: flex; 
+  align-items: center; 
+  gap: 6px; 
+  font-size: 11.5px; 
+  letter-spacing: 0.12em; 
+  text-transform: uppercase; 
+  font-weight: 400; 
+  color: var(--text); 
+  transition: color .2s; 
+}
+
   /* ── ANNOUNCEMENT BAR ── */
   .announcement {
     background: var(--dark);
@@ -158,7 +171,7 @@
   .section-title { font-family: var(--serif); font-size: clamp(38px, 4vw, 52px); font-weight: 300; color: var(--dark); line-height: 1.15; }
   .section-title em { font-style: italic; }
   .container { max-width: 1440px; margin: auto; padding: 0 48px; }
-  .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
   .cat-card { position: relative; overflow: hidden; cursor: pointer; }
   .cat-img {
     height: 420px;
