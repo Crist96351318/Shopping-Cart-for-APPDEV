@@ -1,19 +1,25 @@
 <?php
 require_once 'config.php';
+require_once 'db_connection.php';
+require_once 'functions.php';
 
-if (isset($_POST['product_id'])) {
-    $p_id = $_POST['product_id'];
-    
-    // Initialize cart if empty
-    if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = [];
-    }
-    
-    // Add product ID to session
-    $_SESSION['cart'][] = $p_id;
-    
-    // Redirect back to the page you came from
-    header("Location: " . $_SERVER['HTTP_REFERER']);
-    exit();
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    handleError('Method not allowed', 405);
 }
+
+$payload = json_decode(file_get_contents('php://input'), true);
+if (!$payload) {
+    $payload = $_POST;
+}
+
+$product_id = intval($payload['product_id'] ?? 0);
+$quantity = intval($payload['quantity'] ?? 1);
+
+if ($product_id <= 0 || $quantity < 1) {
+    handleError('product_id and quantity are required (quantity >=1)');
+}
+
+$cart = addToSessionCart($product_id, $quantity);
+$cartDetails = getCartDetails($conn);
+jsonResponse(['success' => true, 'message' => 'Product added to cart', 'cart' => $cartDetails]);
 ?>
