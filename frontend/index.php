@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Le parfum Shop</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+    <title>Le parfum Shop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -27,9 +27,9 @@
 <header>
   <div class="header-inner">
     <nav>
-      <a href="#">Fragrances</a>
-      <a href="#">Collections</a>
-      <a href="#">Gifts</a>
+      <a href="fragrances.php">Fragrances</a>
+      <a href="collections.php">Collections</a>
+      <a href="gifts.php">Gifts</a>
     </nav>
     <div class="logo">le parfum </div>
     <div class="header-actions">
@@ -43,7 +43,7 @@
       <button>Account</button>
       <button class="cart-btn">
         Cart
-        <span class="cart-count">2</span>
+        <span class="cart-count">0</span>
       </button>
     </div>
   </div>
@@ -243,41 +243,6 @@
             <div class="testi-handle">Verified Customer</div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="journal">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-tag">Wellness</span>
-      <h2 class="section-title">From the <em>Journal</em></h2>
-    </div>
-    <div class="journal-grid">
-      <div class="journal-card">
-        <div class="journal-img journal-img-large">
-          <div class="journal-img-bg j-bg-1"></div>
-        </div>
-        <div class="journal-category">Skincare Science</div>
-        <div class="journal-title">The Truth About Retinol: What Every Skin Type Needs to Know</div>
-        <div class="journal-meta">March 18, 2026 · 6 min read</div>
-      </div>
-      <div class="journal-card">
-        <div class="journal-img">
-          <div class="journal-img-bg j-bg-2"></div>
-        </div>
-        <div class="journal-category">Morning Rituals</div>
-        <div class="journal-title">A 5-Step Morning Routine for Glass Skin</div>
-        <div class="journal-meta">March 10, 2026 · 4 min read</div>
-      </div>
-      <div class="journal-card">
-        <div class="journal-img">
-          <div class="journal-img-bg j-bg-3"></div>
-        </div>
-        <div class="journal-category">Sustainability</div>
-        <div class="journal-title">Why We Chose Glass Packaging Over Plastic</div>
-        <div class="journal-meta">February 28, 2026 · 3 min read</div>
       </div>
     </div>
   </div>
