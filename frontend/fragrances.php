@@ -67,13 +67,152 @@
       <span class="section-tag">Explore our</span>
       <h2 class="section-title">Fragrance <em>Collection</em></h2>
     </section>
-    
-    <div class="container">
-        <div id="productsGrid" class="product-grid">
-            <!-- Products will be loaded here -->
+
+    <div class="container" style="margin-top: 60px;">
+        <div class="category-item">
+            <button class="category-trigger" onclick="toggleCategory('extrait')">
+                <span>Extrait de Parfum</span>
+                <span class="icon">+</span>
+            </button>
+            <div id="extrait" class="category-content">
+                <div class="product-grid">
+                    <div class="product-card">
+                        <div class="product-img-wrap">
+                            <img src="../assets/cat1.png" class="product-img" alt="Product">
+                            <div class="product-actions">
+                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(1)">Buy Now</button>
+                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(1)">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-name">Island Khadlaj</div>
+                        <div class="product-price">$120.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-item">
+            <button class="category-trigger" onclick="toggleCategory('edp')">
+                <span>Eau de Parfum</span>
+                <span class="icon">+</span>
+            </button>
+            <div id="edp" class="category-content">
+                <div class="product-grid">
+                    <div class="product-card">
+                        <div class="product-img-wrap">
+                            <img src="../assets/cat2.png" class="product-img" alt="Product">
+                            <div class="product-actions">
+                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(2)">Buy Now</button>
+                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(2)">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-name">Chanel N°5</div>
+                        <div class="product-price">$150.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-item">
+            <button class="category-trigger" onclick="toggleCategory('edt')">
+                <span>Eau de Toilette</span>
+                <span class="icon">+</span>
+            </button>
+            <div id="edt" class="category-content">
+                <div class="product-grid">
+                    <div class="product-card">
+                        <div class="product-img-wrap">
+                            <img src="../assets/cat3.png" class="product-img" alt="Product">
+                            <div class="product-actions">
+                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(3)">Buy Now</button>
+                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart()">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-name">Gucci Bloom</div>
+                        <div class="product-price">$95.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-item">
+            <button class="category-trigger" onclick="toggleCategory('edc')">
+                <span>Eau de Cologne</span>
+                <span class="icon">+</span>
+            </button>
+            <div id="edc" class="category-content">
+                <div class="product-grid">
+                    <div class="product-card">
+                        <div class="product-img-wrap">
+                            <img src="../assets/cat4.png" class="product-img" alt="Product">
+                            <div class="product-actions">
+                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(4)">Buy Now</button>
+                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(4)">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-name">Jo Malone London</div>
+                        <div class="product-price">$80.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-item">
+            <button class="category-trigger" onclick="toggleCategory('fraiche')">
+                <span>Eau Fraiche</span>
+                <span class="icon">+</span>
+            </button>
+            <div id="fraiche" class="category-content">
+                <div class="product-grid">
+                    <div class="product-card">
+                        <div class="product-img-wrap">
+                            <img src="../assets/cat5.png" class="product-img" alt="Product">
+                            <div class="product-actions">
+                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(5)">Buy Now</button>
+                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(5)">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-name">Chanel Eau Fraîche</div>
+                        <div class="product-price">$75.00</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </main>
+
+<style>
+    .category-item { border-bottom: 1px solid var(--sand); }
+    .category-trigger {
+        width: 100%;
+        padding: 30px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: var(--serif);
+        font-size: 28px;
+        color: var(--dark);
+        text-transform: none;
+        letter-spacing: 0;
+    }
+    .category-trigger .icon { font-size: 20px; color: var(--taupe); transition: transform 0.3s; }
+    .category-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-out, padding 0.3s;
+    }
+    .category-content.show { max-height: 2000px; padding-bottom: 60px; }
+    .category-trigger.active .icon { transform: rotate(45deg); }
+</style>
+
+<script>
+function toggleCategory(id) {
+    const content = document.getElementById(id);
+    const trigger = content.previousElementSibling;
+    content.classList.toggle('show');
+    trigger.classList.toggle('active');
+}
+</script>
 
 <footer>
   <div class="footer-bottom">

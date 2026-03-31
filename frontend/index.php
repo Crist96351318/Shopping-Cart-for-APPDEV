@@ -158,7 +158,7 @@
           <div class="product-img prod-bg-1"></div>
           <span class="badge-new">New</span>
           <div class="product-actions">
-            <button>Wishlist</button>
+            <button class="add-cart" onclick="handleAddToCart(1)">Buy Now</button>
             <button class="add-cart" onclick="handleAddToCart(1)">Add to Cart</button>
           </div>
         </div>
@@ -171,7 +171,7 @@
           <div class="product-img prod-bg-2"></div>
           <span class="badge-sale">Sale</span>
           <div class="product-actions">
-            <button>Wishlist</button>
+            <button class="add-cart" onclick="handleAddToCart(2)">Buy Now</button>
             <button class="add-cart" onclick="handleAddToCart(2)">Add to Cart</button>
           </div>
         </div>
@@ -183,7 +183,7 @@
         <div class="product-img-wrap">
           <div class="product-img prod-bg-3"></div>
           <div class="product-actions">
-            <button>Wishlist</button>
+            <button class="add-cart" onclick="handleAddToCart(3)">Buy Now</button>
             <button class="add-cart" onclick="handleAddToCart(3)">Add to Cart</button>
           </div>
         </div>
@@ -195,7 +195,7 @@
         <div class="product-img-wrap">
           <div class="product-img prod-bg-4"></div>
           <div class="product-actions">
-            <button>Wishlist</button>
+            <button class="add-cart" onclick="handleAddToCart(4)">Buy Now</button>
             <button class="add-cart" onclick="handleAddToCart(4)">Add to Cart</button>
           </div>
         </div>
@@ -203,23 +203,6 @@
         <div class="product-name">Luminous Eye Elixir</div>
         <div class="product-price">$54.00</div>
       </div>
-    </div>
-  </div>
-</section>
-
-<section class="banner-strip">
-  <div class="banner-left">
-    <span class="banner-tag">Skincare Philosophy</span>
-    <h2 class="banner-title">Beauty<br><em>Rooted in</em><br>Nature</h2>
-    <p class="banner-sub">Every formula begins with ethically sourced botanicals, balanced with the precision of modern dermatology.</p>
-    <button class="banner-btn">Discover More</button>
-  </div>
-  <div class="banner-right">
-    <div class="banner-right-inner">
-      <span class="banner-tag">Limited Edition</span>
-      <h2 class="banner-title" style="margin:14px 0;">The Spring<br><em>Ritual Set</em></h2>
-      <p class="banner-sub" style="margin-bottom:28px">Four essential steps. One luminous ritual. Curated for the new season.</p>
-      <button class="banner-btn">Shop Now — $148</button>
     </div>
   </div>
 </section>
@@ -265,16 +248,6 @@
         </div>
       </div>
     </div>
-  </div>
-</section>
-
-<section class="newsletter">
-  <span class="section-tag">Stay in Touch</span>
-  <h2 class="section-title">Join the <em>Ritual</em></h2>
-  <p>Subscribe for exclusive offers, skincare tips, and early access to new arrivals.</p>
-  <div class="newsletter-form">
-    <input type="email" placeholder="Your email address">
-    <button>Subscribe</button>
   </div>
 </section>
 
