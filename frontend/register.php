@@ -91,11 +91,43 @@
 
 <header>
   <div class="header-inner">
-    <div></div>
-
+    <nav>
+      <a href="index.php">Home</a>
+      <a href="fragrances.php">Fragrances</a>
+      <a href="collections.php">Collections</a>
+      <a href="gifts.php">Gifts</a>
+    </nav>
     <div class="logo">le parfum</div>
+    <div class="header-actions">
+  <button class="search-btn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    Search
+  </button>
 
-    <div class="header-actions"></div>
+  <button class="cart-btn" onclick="window.location.href='cart.php'">
+  Cart
+  <span class="cart-count">0</span>
+</button>
+
+  <div class="account-dropdown-wrapper">
+    <button id="accountBtn" style="font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text);">Account</button>
+
+    <div id="accountDropdown" class="account-dropdown-menu">
+      <div class="dropdown-header">
+        <span class="dropdown-name">Guest</span>
+      </div>
+      <div class="dropdown-links">
+        <a href="login.php" class="dropdown-item">Login</a>
+        <a href="register.php" class="dropdown-item">Register</a>
+        <hr class="dropdown-divider">
+        <a href="#" class="dropdown-item" onclick="return false;">Logout</a>
+      </div>
+    </div>
+  </div>
+</div>
   </div>
 </header>
 
@@ -103,29 +135,29 @@
     <div class="account-box">
         <h2 class="account-title">Create <em>Account</em></h2>
         <p style="font-size: 15px; color: black; margin-bottom: 32px; text-align: center;">Join Le Parfum and Be Part of Our Family.</p>
-        <form action="#" method="POST">
+        <form id="registerForm">
             <div class="form-group">
                 <label>First Name</label>
-                <input type="text" placeholder="Enter your first name">
+                <input type="text" name="first_name" placeholder="Enter your first name" required>
             </div>
             <div class="form-group">
                 <label>Last Name</label>
-                <input type="text" placeholder="Enter your last name">
+                <input type="text" name="last_name" placeholder="Enter your last name" required>
             </div>
             <div class="form-group">
                 <label>Contact No.</label>
-                <input type="text" placeholder="Enter your contact number">
+                <input type="text" name="contact_no" placeholder="Enter your contact number">
             </div>
             <div class="form-group">
                 <label>Email Address</label>
-                <input type="email" placeholder="Enter your email">
+                <input type="email" name="email" placeholder="Enter your email" required>
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" placeholder="Create a password">
+                <input type="password" name="password" placeholder="Create a password" required>
             </div>
             <div class="form-actions">
-                <button type="button" class="btn-primary" style="width: 100%;" onclick="window.location.href='index.php'">Sign Up</button>
+                <button type="submit" class="btn-primary" style="width: 100%;">Sign Up</button>
             </div>
         </form>
     </div>
@@ -136,6 +168,14 @@
     <p style="text-align: center; color: black; font-size: 14px; width: 100%;">© 2026 Le Parfum. All rights reserved.</p>
   </div>
 </footer>
+
+<button id="scrollToTopBtn" class="scroll-to-top" title="Go to top">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="18,15 12,9 6,15"></polyline>
+  </svg>
+</button>
+
+<script src="script.js"></script>
 
 </body>
 </html>

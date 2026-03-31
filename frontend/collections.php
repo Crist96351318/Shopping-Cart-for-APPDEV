@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le parfum Shop</title>
+    <title>Collections | Le parfum Shop</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
@@ -52,11 +52,11 @@
     
     <div id="accountDropdown" class="account-dropdown-menu">
       <div class="dropdown-header">
-        <span class="dropdown-name">Cristian Aton</span>
+        <span class="dropdown-name">Guest</span>
       </div>
       <div class="dropdown-links">
-        <a href="#" class="dropdown-item">My Account</a>
-        <a href="#" class="dropdown-item">Settings</a>
+        <a href="login.php" class="dropdown-item">Login</a>
+        <a href="register.php" class="dropdown-item">Register</a>
         <hr class="dropdown-divider">
         <a href="#" class="dropdown-item" onclick="return false;">Logout</a>
       </div>
@@ -69,11 +69,13 @@
 <main style="padding: 80px 48px; min-height: 60vh;">
     <section class="section-header">
       <span class="section-tag">Explore our</span>
-      <h2 class="section-title">[Page Title] <em>Collection</em></h2>
+      <h2 class="section-title">Curated <em>Collections</em></h2>
     </section>
     
-    <div class="container" style="text-align: center; margin-top: 40px;">
-        <p>New items arriving in 2026. Stay tuned!</p>
+    <div class="container">
+        <div id="productsGrid" class="product-grid">
+            <!-- Products will be loaded here -->
+        </div>
     </div>
 </main>
 

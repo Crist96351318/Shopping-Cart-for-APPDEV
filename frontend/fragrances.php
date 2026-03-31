@@ -48,11 +48,11 @@
     
     <div id="accountDropdown" class="account-dropdown-menu">
       <div class="dropdown-header">
-        <span class="dropdown-name">Cristian Aton</span>
+        <span class="dropdown-name">Guest</span>
       </div>
       <div class="dropdown-links">
-        <a href="#" class="dropdown-item">My Account</a>
-        <a href="#" class="dropdown-item">Settings</a>
+        <a href="login.php" class="dropdown-item">Login</a>
+        <a href="register.php" class="dropdown-item">Register</a>
         <hr class="dropdown-divider">
         <a href="#" class="dropdown-item" onclick="return false;">Logout</a>
       </div>
@@ -68,8 +68,10 @@
       <h2 class="section-title">Fragrance <em>Collection</em></h2>
     </section>
     
-    <div class="container" style="text-align: center; margin-top: 40px;">
-        <p>New scents arriving in 2026. Stay tuned!</p>
+    <div class="container">
+        <div id="productsGrid" class="product-grid">
+            <!-- Products will be loaded here -->
+        </div>
     </div>
 </main>
 

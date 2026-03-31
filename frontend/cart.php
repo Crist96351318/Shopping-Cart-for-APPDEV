@@ -54,16 +54,29 @@
     </nav>
     <div class="logo">le parfum</div>
     <div class="header-actions">
+  <button class="search-btn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    Search
+  </button>
+
+  <button class="cart-btn" onclick="window.location.href='cart.php'">
+  Cart
+  <span class="cart-count">0</span>
+</button>
+
   <div class="account-dropdown-wrapper">
     <button id="accountBtn" style="font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text);">Account</button>
-    
+
     <div id="accountDropdown" class="account-dropdown-menu">
       <div class="dropdown-header">
-        <span class="dropdown-name">Cristian Aton</span>
+        <span class="dropdown-name">Guest</span>
       </div>
       <div class="dropdown-links">
-        <a href="#" class="dropdown-item">My Account</a>
-        <a href="#" class="dropdown-item">Settings</a>
+        <a href="login.php" class="dropdown-item">Login</a>
+        <a href="register.php" class="dropdown-item">Register</a>
         <hr class="dropdown-divider">
         <a href="#" class="dropdown-item" onclick="return false;">Logout</a>
       </div>
@@ -86,44 +99,15 @@
                 <th></th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <div class="cart-item-info">
-                        <img src="../assets/cat1.png" class="cart-item-img" alt="Product">
-                        <div>
-                            <span class="cart-item-tag">Extrait de Parfum</span>
-                            <span class="cart-item-name">Island Khadlaj</span>
-                        </div>
-                    </div>
-                </td>
-                <td><input type="number" class="qty-input" value="1"></td>
-                <td>$120.00</td>
-                <td>$120.00</td>
-                <td><button class="remove-btn">Remove</button></td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="cart-item-info">
-                        <img src="../assets/cat2.png" class="cart-item-img" alt="Product">
-                        <div>
-                            <span class="cart-item-tag">Eau de Parfum</span>
-                            <span class="cart-item-name">Chanel N°5</span>
-                        </div>
-                    </div>
-                </td>
-                <td><input type="number" class="qty-input" value="1"></td>
-                <td>$150.00</td>
-                <td>$150.00</td>
-                <td><button class="remove-btn">Remove</button></td>
-            </tr>
+        <tbody id="cartItems">
+            <!-- Cart items will be populated here -->
         </tbody>
     </table>
 
     <div class="cart-summary">
         <div class="summary-row">
             <span>Subtotal</span>
-            <span>$270.00</span>
+            <span id="subtotal">$0.00</span>
         </div>
         <div class="summary-row">
             <span>Shipping</span>
@@ -131,9 +115,9 @@
         </div>
         <div class="summary-row total-row">
             <strong>Total</strong>
-            <strong>$270.00</strong>
+            <strong id="total">$0.00</strong>
         </div>
-        <button class="btn-primary" style="width: 300px; margin-top: 20px;">Proceed to Checkout</button>
+        <button class="btn-primary" id="checkoutBtn" style="width: 300px; margin-top: 20px;">Proceed to Checkout</button>
         <a href="fragrances.php" class="toggle-link" style="margin-top: 15px; width: 300px; text-align: center;">Continue Shopping</a>
     </div>
 </main>

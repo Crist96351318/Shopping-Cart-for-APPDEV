@@ -52,11 +52,11 @@
     
     <div id="accountDropdown" class="account-dropdown-menu">
       <div class="dropdown-header">
-        <span class="dropdown-name">Cristian Aton</span>
+        <span class="dropdown-name">Guest</span>
       </div>
       <div class="dropdown-links">
-        <a href="#" class="dropdown-item">My Account</a>
-        <a href="#" class="dropdown-item">Settings</a>
+        <a href="login.php" class="dropdown-item">Login</a>
+        <a href="register.php" class="dropdown-item">Register</a>
         <hr class="dropdown-divider">
         <a href="#" class="dropdown-item" onclick="return false;">Logout</a>
       </div>
@@ -159,7 +159,7 @@
           <span class="badge-new">New</span>
           <div class="product-actions">
             <button>Wishlist</button>
-            <button class="add-cart">Add to Cart</button>
+            <button class="add-cart" onclick="handleAddToCart(1)">Add to Cart</button>
           </div>
         </div>
         <div class="product-tag">Serum</div>
@@ -172,7 +172,7 @@
           <span class="badge-sale">Sale</span>
           <div class="product-actions">
             <button>Wishlist</button>
-            <button class="add-cart">Add to Cart</button>
+            <button class="add-cart" onclick="handleAddToCart(2)">Add to Cart</button>
           </div>
         </div>
         <div class="product-tag">Moisturiser</div>
@@ -184,7 +184,7 @@
           <div class="product-img prod-bg-3"></div>
           <div class="product-actions">
             <button>Wishlist</button>
-            <button class="add-cart">Add to Cart</button>
+            <button class="add-cart" onclick="handleAddToCart(3)">Add to Cart</button>
           </div>
         </div>
         <div class="product-tag">Facial Oil</div>
@@ -196,7 +196,7 @@
           <div class="product-img prod-bg-4"></div>
           <div class="product-actions">
             <button>Wishlist</button>
-            <button class="add-cart">Add to Cart</button>
+            <button class="add-cart" onclick="handleAddToCart(4)">Add to Cart</button>
           </div>
         </div>
         <div class="product-tag">Eye Care</div>
