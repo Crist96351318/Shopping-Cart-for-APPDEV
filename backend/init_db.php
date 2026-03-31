@@ -4,8 +4,7 @@ require_once 'db_connection.php'; // Uses your existing XAMPP connection
 // 1. Create Categories Table
 $sql1 = "CREATE TABLE IF NOT EXISTS categories (
     category_id INT AUTO_INCREMENT PRIMARY KEY,
-    category_name VARCHAR(100) NOT NULL,
-    description TEXT
+    name VARCHAR(100) NOT NULL UNIQUE
 )";
 
 // 2. Create Products Table (Linking to categories)
@@ -20,8 +19,8 @@ $sql2 = "CREATE TABLE IF NOT EXISTS products (
     FOREIGN KEY (category_id) REFERENCES categories(category_id)
 )";
 
-// 3. Create Customers Table
-$sql3 = "CREATE TABLE IF NOT EXISTS customers (
+// 3. Create Users Table
+$sql3 = "CREATE TABLE IF NOT EXISTS users (
     customer_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(100),
     last_name VARCHAR(100),
@@ -31,19 +30,30 @@ $sql3 = "CREATE TABLE IF NOT EXISTS customers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 
-// 4. Create Orders Table
-$sql4 = "CREATE TABLE IF NOT EXISTS orders (
+// 4. Create Cart Table
+$sql4 = "CREATE TABLE IF NOT EXISTS cart (
+    cart_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    product_id INT,
+    quantity INT NOT NULL DEFAULT 1,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES users(customer_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+)";
+
+// 5. Create Orders Table
+$sql5 = "CREATE TABLE IF NOT EXISTS orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT,
     order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     total_amount DECIMAL(10,2),
-    status ENUM('Pending', 'Shipped', 'Delivered') DEFAULT 'Pending',
-    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+    status VARCHAR(50) DEFAULT 'Pending',
+    FOREIGN KEY (customer_id) REFERENCES users(customer_id)
 )";
 
-// 5. Create Order Items Table (The Bridge)
-$sql5 = "CREATE TABLE IF NOT EXISTS order_items (
-    order_item_id INT AUTO_INCREMENT PRIMARY KEY,
+// 6. Create Order Details Table
+$sql6 = "CREATE TABLE IF NOT EXISTS order_details (
+    order_detail_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT,
     product_id INT,
     quantity INT,
@@ -52,7 +62,7 @@ $sql5 = "CREATE TABLE IF NOT EXISTS order_items (
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 )";
 
-$tables = [$sql1, $sql2, $sql3, $sql4, $sql5];
+$tables = [$sql1, $sql2, $sql3, $sql4, $sql5, $sql6];
 
 foreach($tables as $k => $sql) {
     if ($conn->query($sql) === TRUE) {

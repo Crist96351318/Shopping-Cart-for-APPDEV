@@ -9,9 +9,13 @@ if (!$payload) {
     $payload = $_REQUEST;
 }
 
+requireLogin();
+
+$customer_id = intval($_SESSION['user_id']);
+
 switch ($method) {
     case 'GET':
-        $cartDetails = getCartDetails($conn);
+        $cartDetails = getCart($conn, $customer_id);
         jsonResponse(['success' => true, 'cart' => $cartDetails]);
         break;
 
@@ -21,8 +25,8 @@ switch ($method) {
         if ($product_id <= 0 || $quantity < 1) {
             handleError('product_id and quantity are required', 400);
         }
-        addToSessionCart($product_id, $quantity);
-        jsonResponse(['success' => true, 'message' => 'Item added', 'cart' => getCartDetails($conn)]);
+        $cartDetails = addToCart($conn, $customer_id, $product_id, $quantity);
+        jsonResponse(['success' => true, 'message' => 'Item added', 'cart' => $cartDetails]);
         break;
 
     case 'PUT':
@@ -32,8 +36,8 @@ switch ($method) {
         if ($product_id <= 0) {
             handleError('product_id is required', 400);
         }
-        updateSessionCart($product_id, $quantity);
-        jsonResponse(['success' => true, 'message' => 'Cart updated', 'cart' => getCartDetails($conn)]);
+        $cartDetails = updateCart($conn, $customer_id, $product_id, $quantity);
+        jsonResponse(['success' => true, 'message' => 'Cart updated', 'cart' => $cartDetails]);
         break;
 
     case 'DELETE':
@@ -41,8 +45,8 @@ switch ($method) {
         if ($product_id <= 0) {
             handleError('product_id is required', 400);
         }
-        updateSessionCart($product_id, 0);
-        jsonResponse(['success' => true, 'message' => 'Item removed', 'cart' => getCartDetails($conn)]);
+        $cartDetails = updateCart($conn, $customer_id, $product_id, 0);
+        jsonResponse(['success' => true, 'message' => 'Item removed', 'cart' => $cartDetails]);
         break;
 
     default:

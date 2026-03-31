@@ -25,7 +25,7 @@ if (!$order) {
 }
 
 // Fetch items
-$stmtItems = $conn->prepare('SELECT oi.quantity, oi.price_at_purchase, p.name FROM order_items oi JOIN products p ON oi.product_id = p.product_id WHERE oi.order_id = ?');
+$stmtItems = $conn->prepare('SELECT od.quantity, od.price_at_purchase, p.name FROM order_details od JOIN products p ON od.product_id = p.product_id WHERE od.order_id = ?');
 $stmtItems->bind_param('i', $order_id);
 $stmtItems->execute();
 $itemsResult = $stmtItems->get_result();

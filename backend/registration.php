@@ -27,7 +27,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 }
 
 // Check existing user
-$stmt = $conn->prepare('SELECT customer_id FROM customers WHERE email = ? LIMIT 1');
+$stmt = $conn->prepare('SELECT customer_id FROM users WHERE email = ? LIMIT 1');
 $stmt->bind_param('s', $email);
 $stmt->execute();
 $stmt->store_result();
@@ -37,7 +37,7 @@ if ($stmt->num_rows > 0) {
 $stmt->close();
 
 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-$stmt = $conn->prepare('INSERT INTO customers (first_name, last_name, email, password, address) VALUES (?, ?, ?, ?, ?)');
+$stmt = $conn->prepare('INSERT INTO users (first_name, last_name, email, password, address) VALUES (?, ?, ?, ?, ?)');
 $stmt->bind_param('sssss', $first_name, $last_name, $email, $hashedPassword, $address);
 
 if ($stmt->execute()) {

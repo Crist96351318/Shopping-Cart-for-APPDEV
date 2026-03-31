@@ -27,7 +27,7 @@ try {
     }
     $orderId = $conn->insert_id;
 
-    $stmtItem = $conn->prepare('INSERT INTO order_items (order_id, product_id, quantity, price_at_purchase) VALUES (?, ?, ?, ?)');
+    $stmtItem = $conn->prepare('INSERT INTO order_details (order_id, product_id, quantity, price_at_purchase) VALUES (?, ?, ?, ?)');
     foreach ($cartDetails['items'] as $item) {
         $pid = $item['product_id'];
         $qty = $item['quantity'];
@@ -39,7 +39,7 @@ try {
     }
 
     $conn->commit();
-    clearSessionCart();
+    clearCart($conn, $user['customer_id']);
     jsonResponse(['success' => true, 'message' => 'Order placed', 'order_id' => $orderId]);
 } catch (Exception $e) {
     $conn->rollback();

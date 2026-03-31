@@ -23,7 +23,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     handleError('Invalid email', 400);
 }
 
-$stmt = $conn->prepare('SELECT customer_id, first_name, last_name, email, password, address FROM customers WHERE email = ? LIMIT 1');
+$stmt = $conn->prepare('SELECT customer_id, first_name, last_name, email, password, address FROM users WHERE email = ? LIMIT 1');
 $stmt->bind_param('s', $email);
 $stmt->execute();
 $result = $stmt->get_result();

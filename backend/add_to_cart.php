@@ -19,7 +19,10 @@ if ($product_id <= 0 || $quantity < 1) {
     handleError('product_id and quantity are required (quantity >=1)');
 }
 
-$cart = addToSessionCart($product_id, $quantity);
-$cartDetails = getCartDetails($conn);
+requireLogin();
+$user = getLoggedInUser($conn);
+
+$cart = addToCart($conn, $user['customer_id'], $product_id, $quantity);
+$cartDetails = getCart($conn, $user['customer_id']);
 jsonResponse(['success' => true, 'message' => 'Product added to cart', 'cart' => $cartDetails]);
 ?>
