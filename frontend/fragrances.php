@@ -30,19 +30,35 @@
     </nav>
     <div class="logo">le parfum</div>
     <div class="header-actions">
-      <button class="search-btn">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-        Search
-      </button>
-      <button>Account</button>
-      <button class="cart-btn">
-        Cart
-        <span class="cart-count">0</span>
-      </button>
+  <button class="search-btn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    Search
+  </button>
+
+  <button class="cart-btn" onclick="window.location.href='cart.php'">
+  Cart
+  <span class="cart-count">0</span>
+</button>
+
+  <div class="account-dropdown-wrapper">
+    <button id="accountBtn" style="font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text);">Account</button>
+    
+    <div id="accountDropdown" class="account-dropdown-menu">
+      <div class="dropdown-header">
+        <span class="dropdown-name">Cristian Aton</span>
+      </div>
+      <div class="dropdown-links">
+        <a href="#" class="dropdown-item">My Account</a>
+        <a href="#" class="dropdown-item">Settings</a>
+        <hr class="dropdown-divider">
+        <a href="#" class="dropdown-item" onclick="return false;">Logout</a>
+      </div>
     </div>
+  </div>
+</div>
   </div>
 </header>
 
