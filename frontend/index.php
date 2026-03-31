@@ -29,19 +29,9 @@
     <nav>
       <a href="index.php">Home</a>
       <a href="fragrances.php">Fragrances</a>
-      <a href="collections.php">Collections</a>
-      <a href="gifts.php">Gifts</a>
     </nav>
     <div class="logo">le parfum </div>
     <div class="header-actions">
-  <button class="search-btn">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="11" cy="11" r="8"></circle>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-    </svg>
-    Search
-  </button>
-
   <button class="cart-btn" onclick="window.location.href='cart.php'">
   Cart
   <span class="cart-count">0</span>
