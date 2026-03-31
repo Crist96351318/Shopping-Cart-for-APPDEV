@@ -388,14 +388,26 @@ function renderOrderConfirmation(order) {
 // UI Update Functions
 function updateAccountDropdown(user) {
     const dropdownName = document.querySelector('.dropdown-name');
-    const logoutLink = document.querySelector('.dropdown-item[onclick*="logout"]');
 
-    if (user && dropdownName) {
-        dropdownName.textContent = `${user.first_name} ${user.last_name}`;
+    if (dropdownName) {
+        dropdownName.textContent = user ? `${user.first_name} ${user.last_name}` : 'Guest';
     }
 
-    if (logoutLink) {
-        logoutLink.setAttribute('onclick', 'handleLogout()');
+    const logoutLinks = document.querySelectorAll('.dropdown-item[href*="logout"], .logout-link');
+    logoutLinks.forEach(link => {
+        link.setAttribute('href', '#');
+        link.classList.add('logout-link');
+        link.onclick = async (event) => {
+            event.preventDefault();
+            await handleLogout();
+        };
+        link.style.cursor = 'pointer';
+    });
+
+    if (!user) {
+        logoutLinks.forEach(link => {
+            link.onclick = (event) => event.preventDefault();
+        });
     }
 }
 
