@@ -168,12 +168,28 @@
         <div class="admin-table-card">
             <div class="table-header">
                 <h3>Current Inventory</h3>
-                <button class="btn-primary">+ Add New Perfume</button>
             </div>
+
+            <form id="addProductForm" style="margin-bottom: 24px; display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr);">
+                <input type="text" name="name" placeholder="Product Name" required style="padding: 10px; border: 1px solid var(--taupe)">
+                <input type="text" name="category" placeholder="Category" required style="padding: 10px; border: 1px solid var(--taupe)">
+                <input type="number" name="price" placeholder="Price" step="0.01" min="0" required style="padding: 10px; border: 1px solid var(--taupe)">
+                <input type="number" name="stock_quantity" placeholder="Stock Quantity" min="0" required style="padding: 10px; border: 1px solid var(--taupe)">
+                <input type="url" name="image_path" placeholder="Primary Image URL" style="padding: 10px; border: 1px solid var(--taupe); grid-column: 1 / span 2;">
+                <div style="grid-column: 1 / span 2;">
+                    <label style="display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--brown); margin-bottom: 8px;">Additional Images</label>
+                    <div id="addAdditionalImages"></div>
+                    <button type="button" onclick="addImageFieldToAdd()" style="background: #f0f0f0; border: 1px solid #ccc; padding: 5px 10px; margin-top: 5px;">+ Add Image</button>
+                </div>
+                <input type="text" name="description" placeholder="Description" style="padding: 10px; border: 1px solid var(--taupe); grid-column: 1 / span 2;">
+                <button type="submit" class="btn-primary" style="grid-column: 1 / span 2;">Add New Perfume</button>
+            </form>
+
             <table>
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Image</th>
                         <th>Product Name</th>
                         <th>Category</th>
                         <th>Price</th>
@@ -181,28 +197,9 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="inventoryRows">
                     <tr>
-                        <td>#101</td>
-                        <td>Island Khadlaj</td>
-                        <td>Extrait de Parfum</td>
-                        <td>$120.00</td>
-                        <td>45</td>
-                        <td>
-                            <button class="action-link">Edit</button>
-                            <button class="action-link" style="color: #cc6666;">Delete</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>#102</td>
-                        <td>Chanel N°5</td>
-                        <td>Eau de Parfum</td>
-                        <td>$150.00</td>
-                        <td>12</td>
-                        <td>
-                            <button class="action-link">Edit</button>
-                            <button class="action-link" style="color: #cc6666;">Delete</button>
-                        </td>
+                        <td colspan="7" style="text-align:center; padding: 24px;">No products loaded yet.</td>
                     </tr>
                 </tbody>
             </table>
@@ -436,6 +433,292 @@
             console.error('Error:', error);
             alert('An error occurred while updating the admin password.');
         });
+    }
+
+    // Add product / inventory functions
+    function renderProductsTable(products) {
+        const tbody = document.getElementById('inventoryRows');
+        tbody.innerHTML = '';
+
+        if (!products || products.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 24px;">No products found</td></tr>';
+            return;
+        }
+
+        products.forEach(product => {
+            const imageHtml = product.image_path ? `<img src="${product.image_path}" alt="${product.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">` : 'No image';
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>#${product.product_id}</td>
+                <td>${imageHtml}</td>
+                <td>${product.name}</td>
+                <td>${product.category_name || product.category_id || '-'}</td>
+                <td>$${parseFloat(product.price).toFixed(2)}</td>
+                <td>${product.stock_quantity}</td>
+                <td>
+                    <button class="action-link" onclick="promptEditProduct(${product.product_id})">Edit</button>
+                    <button class="action-link" style="color: #cc6666;" onclick="removeProduct(${product.product_id})">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function fetchProductsForAdmin() {
+        fetch('../backend/get_products.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                renderProductsTable(data.products);
+            } else {
+                alert('Failed to load products: ' + (data.message || 'unknown'));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Error loading products');
+        });
+    }
+
+
+
+    document.getElementById('addProductForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        const data = {
+            name: formData.get('name'),
+            category: formData.get('category'),
+            description: formData.get('description'),
+            price: parseFloat(formData.get('price')),
+            stock_quantity: parseInt(formData.get('stock_quantity'), 10),
+            image_path: formData.get('image_path')
+        };
+
+        // First add the product
+        fetch('../backend/add_product.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                // Then add additional images if any
+                const additionalImages = formData.getAll('additional_images[]').filter(url => url.trim());
+                if (additionalImages.length > 0) {
+                    const productId = result.product_id;
+                    const promises = additionalImages.map(imgUrl => 
+                        fetch('../backend/add_product_image.php', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({product_id: productId, image_path: imgUrl})
+                        }).then(res => res.json())
+                    );
+                    Promise.all(promises).then(results => {
+                        const failures = results.filter(r => !r.success);
+                        if (failures.length > 0) {
+                            alert('Product added but some images failed to add.');
+                        } else {
+                            alert('Product and images added successfully!');
+                        }
+                        this.reset();
+                        document.getElementById('addAdditionalImages').innerHTML = '';
+                        fetchProductsForAdmin();
+                    });
+                } else {
+                    alert('Product added successfully!');
+                    this.reset();
+                    fetchProductsForAdmin();
+                }
+            } else {
+                alert('Error adding product: ' + (result.message || 'unknown'));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Error adding product');
+        });
+    });
+
+    // Fetch products initially when products section opens
+    function showSection(section, event) {
+        if (event) event.preventDefault();
+
+        document.getElementById('analytics-section').style.display = 'none';
+        document.getElementById('products-section').style.display = 'none';
+        document.getElementById('orders-section').style.display = 'none';
+        document.getElementById('admins-section').style.display = 'none';
+
+        document.getElementById(section + '-section').style.display = 'block';
+
+        const links = document.querySelectorAll('.sidebar-nav a:not(.logout-btn)');
+        links.forEach(link => link.classList.remove('active'));
+        if (event) event.currentTarget.classList.add('active');
+
+        if (section === 'admins') {
+            loadAdminsList();
+        }
+        if (section === 'products') {
+            fetchProductsForAdmin();
+        }
+    }
+
+    function removeProduct(productId) {
+        if (!confirm('Delete this product?')) return;
+        fetch('../backend/delete_product.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({product_id: productId})
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Product removed successfully');
+                fetchProductsForAdmin();
+            } else {
+                alert('Unable to delete product: ' + (data.message || 'unknown'));
+            }
+        });
+    }
+
+    function promptEditProduct(productId) {
+        // Find the product data from the current table
+        const rows = document.querySelectorAll('#inventoryRows tr');
+        let productData = null;
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length > 0 && cells[0].textContent === `#${productId}`) {
+                productData = {
+                    id: productId,
+                    name: cells[2].textContent,
+                    category: cells[3].textContent,
+                    price: parseFloat(cells[4].textContent.replace('$', '')),
+                    stock: parseInt(cells[5].textContent)
+                };
+            }
+        });
+
+        if (!productData) {
+            alert('Product data not found');
+            return;
+        }
+
+        // Create edit form
+        const editForm = document.createElement('div');
+        editForm.innerHTML = `
+            <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+                <div style="background: white; padding: 20px; border-radius: 8px; max-width: 500px; width: 90%;">
+                    <h3>Edit Product</h3>
+                    <form id="editProductForm">
+                        <input type="hidden" name="product_id" value="${productId}">
+                        <div style="margin-bottom: 10px;">
+                            <label>Name:</label>
+                            <input type="text" name="name" value="${productData.name}" required style="width: 100%; padding: 8px;">
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label>Category:</label>
+                            <input type="text" name="category" value="${productData.category}" required style="width: 100%; padding: 8px;">
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label>Price:</label>
+                            <input type="number" name="price" value="${productData.price}" step="0.01" min="0" required style="width: 100%; padding: 8px;">
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label>Stock:</label>
+                            <input type="number" name="stock_quantity" value="${productData.stock}" min="0" required style="width: 100%; padding: 8px;">
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label>Image URL:</label>
+                            <input type="url" name="image_path" placeholder="https://..." style="width: 100%; padding: 8px;">
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label>Description:</label>
+                            <textarea name="description" style="width: 100%; padding: 8px; height: 60px;"></textarea>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label>Additional Images:</label>
+                            <div id="additionalImages"></div>
+                            <button type="button" onclick="addImageField()" style="background: #f0f0f0; border: 1px solid #ccc; padding: 5px 10px;">+ Add Image</button>
+                        </div>
+                        <button type="submit" class="btn-primary">Update Product</button>
+                        <button type="button" onclick="closeEditForm()" style="margin-left: 10px; background: #ccc;">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(editForm);
+
+        document.getElementById('editProductForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = {
+                product_id: formData.get('product_id'),
+                name: formData.get('name'),
+                category: formData.get('category'),
+                description: formData.get('description'),
+                price: parseFloat(formData.get('price')),
+                stock_quantity: parseInt(formData.get('stock_quantity')),
+                image_path: formData.get('image_path')
+            };
+
+            // First update the product
+            fetch('../backend/update_product.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    // Then add additional images if any
+                    const additionalImages = formData.getAll('additional_images[]').filter(url => url.trim());
+                    if (additionalImages.length > 0) {
+                        const promises = additionalImages.map(imgUrl => 
+                            fetch('../backend/add_product_image.php', {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify({product_id: data.product_id, image_path: imgUrl})
+                            }).then(res => res.json())
+                        );
+                        Promise.all(promises).then(results => {
+                            const failures = results.filter(r => !r.success);
+                            if (failures.length > 0) {
+                                alert('Product updated but some images failed to add.');
+                            } else {
+                                alert('Product and images updated successfully!');
+                            }
+                            closeEditForm();
+                            fetchProductsForAdmin();
+                        });
+                    } else {
+                        alert('Product updated successfully!');
+                        closeEditForm();
+                        fetchProductsForAdmin();
+                    }
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the product.');
+            });
+        });
+    }
+
+    function addImageFieldToAdd() {
+        const container = document.getElementById('addAdditionalImages');
+        const div = document.createElement('div');
+        div.style.marginBottom = '5px';
+        div.innerHTML = '<input type="url" name="additional_images[]" placeholder="Additional image URL" style="width: 80%; padding: 5px;"><button type="button" onclick="this.parentNode.remove()" style="margin-left: 5px;">Remove</button>';
+        container.appendChild(div);
+    }
+
+    function closeEditForm() {
+        const editForm = document.querySelector('div[style*="position: fixed"]');
+        if (editForm) editForm.remove();
     }
 </script>
 

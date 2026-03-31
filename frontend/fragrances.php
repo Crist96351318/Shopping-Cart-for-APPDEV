@@ -68,111 +68,61 @@
 
     <div class="container" style="margin-top: 60px;">
         <div class="category-item">
-            <button class="category-trigger" onclick="toggleCategory('extrait')">
+            <button class="category-trigger" onclick="toggleCategory('extrait', 'Extrait de Parfum')">
                 <span>Extrait de Parfum</span>
                 <span class="icon">+</span>
             </button>
             <div id="extrait" class="category-content">
-                <div class="product-grid">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../assets/cat1.png" class="product-img" alt="Product">
-                            <div class="product-actions">
-                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(1)">Buy Now</button>
-                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(1)">Add to Cart</button>
-                            </div>
-                        </div>
-                        <div class="product-name">Island Khadlaj</div>
-                        <div class="product-price">$120.00</div>
-                    </div>
+                <div class="product-grid" id="extrait-grid">
+                    <div class="loading">Loading products...</div>
                 </div>
             </div>
         </div>
 
         <div class="category-item">
-            <button class="category-trigger" onclick="toggleCategory('edp')">
+            <button class="category-trigger" onclick="toggleCategory('edp', 'Eau de Parfum')">
                 <span>Eau de Parfum</span>
                 <span class="icon">+</span>
             </button>
             <div id="edp" class="category-content">
-                <div class="product-grid">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../assets/cat2.png" class="product-img" alt="Product">
-                            <div class="product-actions">
-                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(2)">Buy Now</button>
-                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(2)">Add to Cart</button>
-                            </div>
-                        </div>
-                        <div class="product-name">Chanel N°5</div>
-                        <div class="product-price">$150.00</div>
-                    </div>
+                <div class="product-grid" id="edp-grid">
+                    <div class="loading">Loading products...</div>
                 </div>
             </div>
         </div>
 
         <div class="category-item">
-            <button class="category-trigger" onclick="toggleCategory('edt')">
+            <button class="category-trigger" onclick="toggleCategory('edt', 'Eau de Toilette')">
                 <span>Eau de Toilette</span>
                 <span class="icon">+</span>
             </button>
             <div id="edt" class="category-content">
-                <div class="product-grid">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../assets/cat3.png" class="product-img" alt="Product">
-                            <div class="product-actions">
-                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(3)">Buy Now</button>
-                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart()">Add to Cart</button>
-                            </div>
-                        </div>
-                        <div class="product-name">Gucci Bloom</div>
-                        <div class="product-price">$95.00</div>
-                    </div>
+                <div class="product-grid" id="edt-grid">
+                    <div class="loading">Loading products...</div>
                 </div>
             </div>
         </div>
 
         <div class="category-item">
-            <button class="category-trigger" onclick="toggleCategory('edc')">
+            <button class="category-trigger" onclick="toggleCategory('edc', 'Eau de Cologne')">
                 <span>Eau de Cologne</span>
                 <span class="icon">+</span>
             </button>
             <div id="edc" class="category-content">
-                <div class="product-grid">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../assets/cat4.png" class="product-img" alt="Product">
-                            <div class="product-actions">
-                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(4)">Buy Now</button>
-                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(4)">Add to Cart</button>
-                            </div>
-                        </div>
-                        <div class="product-name">Jo Malone London</div>
-                        <div class="product-price">$80.00</div>
-                    </div>
+                <div class="product-grid" id="edc-grid">
+                    <div class="loading">Loading products...</div>
                 </div>
             </div>
         </div>
 
         <div class="category-item">
-            <button class="category-trigger" onclick="toggleCategory('fraiche')">
+            <button class="category-trigger" onclick="toggleCategory('fraiche', 'Eau Fraiche')">
                 <span>Eau Fraiche</span>
                 <span class="icon">+</span>
             </button>
             <div id="fraiche" class="category-content">
-                <div class="product-grid">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../assets/cat5.png" class="product-img" alt="Product">
-                            <div class="product-actions">
-                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(5)">Buy Now</button>
-                                <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(5)">Add to Cart</button>
-                            </div>
-                        </div>
-                        <div class="product-name">Chanel Eau Fraîche</div>
-                        <div class="product-price">$75.00</div>
-                    </div>
+                <div class="product-grid" id="fraiche-grid">
+                    <div class="loading">Loading products...</div>
                 </div>
             </div>
         </div>
@@ -201,15 +151,122 @@
     }
     .category-content.show { max-height: 2000px; padding-bottom: 60px; }
     .category-trigger.active .icon { transform: rotate(45deg); }
+
+    .loading, .error, .no-products {
+        text-align: center;
+        padding: 40px;
+        color: var(--taupe);
+        font-style: italic;
+    }
+
+    .error { color: #cc6666; }
+    .no-products { color: var(--brown); }
 </style>
 
 <script>
-function toggleCategory(id) {
+function toggleCategory(id, categoryName) {
     const content = document.getElementById(id);
     const trigger = content.previousElementSibling;
+    const isOpening = !content.classList.contains('show');
+
     content.classList.toggle('show');
     trigger.classList.toggle('active');
+
+    // Load products if opening and not already loaded
+    if (isOpening && !content.dataset.loaded) {
+        loadCategoryProducts(id, categoryName);
+    }
 }
+
+function loadCategoryProducts(categoryId, categoryName) {
+    const grid = document.getElementById(categoryId + '-grid');
+    const content = document.getElementById(categoryId);
+
+    if (window.fragranceProducts && window.fragranceProducts.length > 0) {
+        const products = window.fragranceProducts.filter(p => p.category_name && p.category_name.toLowerCase() === categoryName.toLowerCase());
+        renderProducts(grid, products);
+        content.dataset.loaded = 'true';
+        return;
+    }
+
+    fetch('../backend/get_products.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.fragranceProducts = data.products || [];
+                const products = window.fragranceProducts.filter(p => p.category_name && p.category_name.toLowerCase() === categoryName.toLowerCase());
+                renderProducts(grid, products);
+                content.dataset.loaded = 'true';
+            } else {
+                grid.innerHTML = '<div class="error">Failed to load products</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading products:', error);
+            grid.innerHTML = '<div class="error">Error loading products</div>';
+        });
+}
+
+function renderProducts(container, products) {
+    if (!products || products.length === 0) {
+        container.innerHTML = '<div class="no-products">No products available in this category</div>';
+        return;
+    }
+
+    const html = products.map(product => `
+        <div class="product-card">
+            <div class="product-img-wrap">
+                <img src="${product.image_path || '../assets/placeholder.png'}" class="product-img" alt="${product.name}">
+                <div class="product-actions">
+                    <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(${product.product_id})">Buy Now</button>
+                    <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(${product.product_id})">Add to Cart</button>
+                </div>
+            </div>
+            <div class="product-name">${product.name}</div>
+            <div class="product-price">$${product.price.toFixed(2)}</div>
+        </div>
+    `).join('');
+
+    container.innerHTML = html;
+}
+
+// Preload all category products on page show and keep data in window cache
+document.addEventListener('DOMContentLoaded', function() {
+    const categories = {
+        extrait: 'Extrait de Parfum',
+        edp: 'Eau de Parfum',
+        edt: 'Eau de Toilette',
+        edc: 'Eau de Cologne',
+        fraiche: 'Eau Fraiche'
+    };
+
+    // Perform a single bulk fetch once
+    fetch('../backend/get_products.php')
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to retrieve products');
+            }
+            window.fragranceProducts = data.products || [];
+
+            Object.entries(categories).forEach(([id, name]) => {
+                const content = document.getElementById(id);
+                if (content) {
+                    const grid = document.getElementById(id + '-grid');
+                    const products = window.fragranceProducts.filter(p => p.category_name && p.category_name.toLowerCase() === name.toLowerCase());
+                    renderProducts(grid, products);
+                    content.dataset.loaded = 'true';
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error preloading products:', error);
+            Object.keys(categories).forEach(id => {
+                const grid = document.getElementById(id + '-grid');
+                if (grid) grid.innerHTML = '<div class="error">Unable to load products</div>';
+            });
+        });
+});
 </script>
 
 <footer>

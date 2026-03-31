@@ -20,6 +20,15 @@ CREATE TABLE IF NOT EXISTS products (
     FOREIGN KEY (category_id) REFERENCES categories(category_id)
 );
 
+CREATE TABLE IF NOT EXISTS product_images (
+    image_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    image_path VARCHAR(255) NOT NULL,
+    is_primary TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
 CREATE TABLE IF NOT EXISTS users (
     customer_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(100),
