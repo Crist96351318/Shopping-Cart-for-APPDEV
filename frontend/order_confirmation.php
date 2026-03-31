@@ -44,8 +44,6 @@
     <nav>
       <a href="index.php">Home</a>
       <a href="fragrances.php">Fragrances</a>
-      <a href="collections.php">Collections</a>
-      <a href="gifts.php">Gifts</a>
     </nav>
     <div class="logo">le parfum</div>
     <div class="header-actions">
