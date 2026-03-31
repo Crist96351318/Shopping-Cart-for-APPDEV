@@ -1,5 +1,6 @@
 // API Configuration
-const API_BASE = '/appdev/Shopping-Cart-for-APPDEV/backend/';
+// Use relative path from frontend to backend. Adjust as needed for your server setup.
+const API_BASE = '../backend/';
 
 // Utility Functions
 function showMessage(message, type = 'info') {
@@ -37,12 +38,20 @@ async function apiRequest(endpoint, options = {}) {
     };
 
     try {
-        const response = await fetch(url, config);
-        const data = await response.json();
-        if (!response.ok) {
-            throw new Error(data.message || 'API request failed');
-        }
-        return data;
+        const response = await fetch(url, { ...config, credentials: 'same-origin' });
+    const text = await response.text();
+    let data;
+    try {
+        data = text ? JSON.parse(text) : {};
+    } catch (err) {
+        throw new Error('Invalid JSON from API: ' + text.slice(0, 300));
+    }
+
+    if (!response.ok) {
+        throw new Error(data.message || ('API request failed (' + response.status + ')'));
+    }
+
+    return data;
     } catch (error) {
         console.error('API Error:', error);
         throw error;
