@@ -93,7 +93,7 @@
   <div class="header-inner" style="display: flex; justify-content: center; align-items: center;">
     <div class="logo">le parfum</div>
   </div>
-</header>>
+</header>
 
 <main class="account-container">
     <div class="account-box">
