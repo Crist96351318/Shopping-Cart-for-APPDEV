@@ -388,12 +388,17 @@ function renderOrderConfirmation(order) {
 // UI Update Functions
 function updateAccountDropdown(user) {
     const dropdownName = document.querySelector('.dropdown-name');
+    const cartBtn = document.querySelector('.cart-btn');
 
     if (dropdownName) {
         dropdownName.textContent = user ? `${user.first_name} ${user.last_name}` : 'Guest';
     }
 
-    const logoutLinks = document.querySelectorAll('.dropdown-item[href*="logout"], .logout-link');
+    if (cartBtn) {
+        cartBtn.style.display = user ? 'inline-flex' : 'none';
+    }
+
+    const logoutLinks = document.querySelectorAll('.dropdown-item.logout-link, .dropdown-item[href="#logout"]');
     logoutLinks.forEach(link => {
         link.setAttribute('href', '#');
         link.classList.add('logout-link');

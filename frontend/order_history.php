@@ -70,7 +70,7 @@
         <a href="login.php" class="dropdown-item">Login</a>
         <a href="register.php" class="dropdown-item">Register</a>
         <hr class="dropdown-divider">
-        <a href="#" class="dropdown-item" onclick="return false;">Logout</a>
+        <a href="#" class="dropdown-item logout-link" onclick="return false;">Logout</a>
       </div>
     </div>
   </div>
