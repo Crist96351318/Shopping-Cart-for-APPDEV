@@ -32,12 +32,27 @@
     </nav>
     <div class="logo">le parfum </div>
     <div class="header-actions">
-      <button>Account</button>
-      <button class="cart-btn">
-        Cart
-        <span class="cart-count">0</span>
-      </button>
+  <button class="cart-btn" onclick="window.location.href='cart.php'">
+  Cart
+  <span class="cart-count">0</span>
+</button>
+
+  <div class="account-dropdown-wrapper">
+    <button id="accountBtn" style="font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text);">Account</button>
+    
+    <div id="accountDropdown" class="account-dropdown-menu">
+      <div class="dropdown-header">
+        <span class="dropdown-name">Guest</span>
+      </div>
+      <div class="dropdown-links">
+        <a href="login.php" class="dropdown-item">Login</a>
+        <a href="register.php" class="dropdown-item">Register</a>
+        <hr class="dropdown-divider">
+        <a href="#" class="dropdown-item logout-link" onclick="return false;">Logout</a>
+      </div>
     </div>
+  </div>
+</div>
   </div>
 </header>
 
