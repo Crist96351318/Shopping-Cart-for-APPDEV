@@ -6,6 +6,7 @@ $password = ""; // XAMPP default is empty
 $dbname = "le_parfum_db"; // Make sure to create this in phpMyAdmin!
 
 // Create connection
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 $conn = new mysqli($host, $username, $password, $dbname);
 
 // Check connection

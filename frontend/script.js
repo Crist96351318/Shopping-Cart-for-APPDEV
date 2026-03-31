@@ -39,19 +39,22 @@ async function apiRequest(endpoint, options = {}) {
 
     try {
         const response = await fetch(url, { ...config, credentials: 'same-origin' });
-    const text = await response.text();
-    let data;
-    try {
-        data = text ? JSON.parse(text) : {};
-    } catch (err) {
-        throw new Error('Invalid JSON from API: ' + text.slice(0, 300));
-    }
+        const text = await response.text();
+        let data;
 
-    if (!response.ok) {
-        throw new Error(data.message || ('API request failed (' + response.status + ')'));
-    }
+        try {
+            data = text ? JSON.parse(text) : {};
+        } catch (err) {
+            throw new Error('Invalid JSON from API: ' + text.slice(0, 300));
+        }
 
-    return data;
+        if (!response.ok) {
+            const serverMessage = data && data.message ? data.message : null;
+            const errorText = serverMessage ? `${serverMessage} (${response.status})` : `API request failed (${response.status})`;
+            throw new Error(errorText);
+        }
+
+        return data;
     } catch (error) {
         console.error('API Error:', error);
         throw error;
