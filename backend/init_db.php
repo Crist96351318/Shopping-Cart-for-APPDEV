@@ -1,5 +1,20 @@
 <?php
-require_once 'db_connection.php'; // Uses your existing XAMPP connection
+// Admin-compatible initialization for le_parfum_db
+$host = 'localhost';
+$username = 'root';
+$password = '';
+$dbname = 'le_parfum_db';
+
+// Create database if doesn't exist
+$baseConn = new mysqli($host, $username, $password);
+if ($baseConn->connect_error) {
+    die('Connection failed: ' . $baseConn->connect_error);
+}
+$baseConn->query("CREATE DATABASE IF NOT EXISTS {$dbname} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+$baseConn->select_db($dbname);
+
+// Use $conn for table creation
+$conn = $baseConn;
 
 // 1. Create Categories Table
 $sql1 = "CREATE TABLE IF NOT EXISTS categories (
@@ -27,6 +42,7 @@ $sql3 = "CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(150) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     address TEXT,
+    is_admin TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 
@@ -62,7 +78,16 @@ $sql6 = "CREATE TABLE IF NOT EXISTS order_details (
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 )";
 
-$tables = [$sql1, $sql2, $sql3, $sql4, $sql5, $sql6];
+// 7. Create Store Admins Table
+$sql7 = "CREATE TABLE IF NOT EXISTS admin_users (
+    admin_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)";
+
+$tables = [$sql1, $sql2, $sql3, $sql4, $sql5, $sql6, $sql7];
 
 foreach($tables as $k => $sql) {
     if ($conn->query($sql) === TRUE) {
@@ -70,6 +95,18 @@ foreach($tables as $k => $sql) {
     } else {
         echo "Error creating table: " . $conn->error . "<br>";
     }
+}
+
+// Optional initial admin manager (do not duplicate on rerun)
+$defaultAdmin = 'admin@gmail.com';
+$defaultUser = 'admin';
+$defaultPass = 'admin123';
+$hashedPass = password_hash($defaultPass, PASSWORD_DEFAULT);
+$sqlAdminSeed = "INSERT IGNORE INTO store_admins (username, email, password) VALUES ('{$defaultUser}', '{$defaultAdmin}', '{$hashedPass}')";
+if ($conn->query($sqlAdminSeed) === TRUE) {
+    echo "Default admin record inserted or already exists.<br>";
+} else {
+    echo "Error inserting default admin: " . $conn->error . "<br>";
 }
 
 $conn->close();

@@ -11,6 +11,7 @@ function showMessage(message, type = 'info') {
 function setLocalUser(user) {
     localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('isAdmin', user.is_admin ? 'true' : 'false');
 }
 
 function getLocalUser() {
@@ -21,6 +22,7 @@ function getLocalUser() {
 function clearLocalUser() {
     localStorage.removeItem('user');
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('isAdmin');
 }
 
 function isLoggedIn() {
@@ -445,7 +447,10 @@ async function checkSession() {
     }
 }
 
-async function handleLogout() {
+async function handleLogout(event) {
+    if (event) {
+        event.preventDefault();
+    }
     try {
         await logout();
         showMessage('Logged out successfully');
@@ -466,7 +471,13 @@ async function handleLogin(event) {
         const data = await login(email, password);
         setLocalUser(data.user);
         showMessage('Login successful!');
-        window.location.href = 'index.php';
+        
+        // Redirect to admin dashboard if user is admin
+        if (data.user.is_admin) {
+            window.location.href = 'admin.php';
+        } else {
+            window.location.href = 'index.php';
+        }
     } catch (error) {
         showMessage('Login failed: ' + error.message);
     }

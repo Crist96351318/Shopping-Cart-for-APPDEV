@@ -112,13 +112,33 @@
 </head>
 <body>
 
+<script>
+    // Protect admin page - only admins can access
+    function checkAdminAccess() {
+        const isAdmin = localStorage.getItem('isAdmin') === 'true';
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        
+        if (!isLoggedIn || !isAdmin) {
+            alert('Access Denied: Admin privileges required.');
+            window.location.href = 'index.php';
+            return false;
+        }
+        return true;
+    }
+    
+    if (!checkAdminAccess()) {
+        document.body.innerHTML = '';
+    }
+</script>
+
 <aside class="admin-sidebar">
     <div class="sidebar-logo">LE PARFUM<small>ADMINISTRATOR</small></div>
     <nav class="sidebar-nav">
         <a href="#" class="active" onclick="showSection('analytics', event)">Dashboard</a>
         <a href="#" onclick="showSection('products', event)">Product Catalog</a>
         <a href="#" onclick="showSection('orders', event)">Order Management</a>
-        <a href="../backend/logout.php" class="logout-btn">Logout</a>
+        <a href="#" onclick="showSection('admins', event)">Admin Management</a>
+        <a href="#" class="logout-btn" onclick="handleLogout(event)">Logout</a>
     </nav>
 </aside>
 
@@ -226,6 +246,49 @@
             </table>
         </div>
     </section>
+
+    <section id="admins-section" style="display:none;">
+        <h2 class="section-title">Admin <em>Management</em></h2>
+        
+        <div class="admin-table-card">
+            <div class="table-header">
+                <h3>Register New Admin</h3>
+            </div>
+            <form id="admin-registration-form" style="max-width: 500px; margin-bottom: 40px;">
+                <div style="margin-bottom: 20px;">
+                    <label for="admin-username" style="display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--brown); margin-bottom: 8px;">Username</label>
+                    <input type="text" id="admin-username" name="username" required style="width: 100%; padding: 12px; border: 1px solid var(--taupe); font-family: var(--sans); font-size: 14px; outline: none;" placeholder="Enter admin username">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label for="admin-email" style="display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--brown); margin-bottom: 8px;">Email</label>
+                    <input type="email" id="admin-email" name="email" required style="width: 100%; padding: 12px; border: 1px solid var(--taupe); font-family: var(--sans); font-size: 14px; outline: none;" placeholder="Enter admin email">
+                </div>
+                <div style="margin-bottom: 30px;">
+                    <label for="admin-password" style="display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--brown); margin-bottom: 8px;">Password</label>
+                    <input type="password" id="admin-password" name="password" required style="width: 100%; padding: 12px; border: 1px solid var(--taupe); font-family: var(--sans); font-size: 14px; outline: none;" placeholder="Enter admin password">
+                </div>
+                <button type="submit" class="btn-primary">Register Admin</button>
+            </form>
+            
+            <div class="table-header">
+                <h3>Current Admins</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="admins-list">
+                    <!-- Admins will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </section>
 </main>
 
 <script>
@@ -236,6 +299,7 @@
         document.getElementById('analytics-section').style.display = 'none';
         document.getElementById('products-section').style.display = 'none';
         document.getElementById('orders-section').style.display = 'none';
+        document.getElementById('admins-section').style.display = 'none';
         
         // Show target
         document.getElementById(section + '-section').style.display = 'block';
@@ -244,8 +308,138 @@
         const links = document.querySelectorAll('.sidebar-nav a:not(.logout-btn)');
         links.forEach(link => link.classList.remove('active'));
         if (event) event.currentTarget.classList.add('active');
+        
+        // Load admins list when showing admins section
+        if (section === 'admins') {
+            loadAdminsList();
+        }
+    }
+
+    // Handle admin registration form
+    document.getElementById('admin-registration-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const data = {
+            username: formData.get('username'),
+            email: formData.get('email'),
+            password: formData.get('password')
+        };
+        
+        fetch('../backend/add_admin.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('Admin registered successfully!');
+                this.reset();
+                loadAdminsList();
+            } else {
+                alert('Error: ' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while registering the admin.');
+        });
+    });
+
+    // Load admins list
+    function loadAdminsList() {
+        fetch('../backend/get_admins.php')
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                const tbody = document.getElementById('admins-list');
+                tbody.innerHTML = '';
+                
+                result.admins.forEach(admin => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${admin.admin_id}</td>
+                        <td>${admin.username}</td>
+                        <td>${admin.email}</td>
+                        <td>${new Date(admin.created_at).toLocaleDateString()}</td>
+                        <td>
+                            <button class="action-link" onclick="editAdminPassword(${admin.admin_id}, '${admin.username}')">Change Password</button>
+                            <button class="action-link" style="color: #cc6666;" onclick="deleteAdmin(${admin.admin_id})">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } else {
+                console.error('Error loading admins:', result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Delete admin function
+    function deleteAdmin(adminId) {
+        if (confirm('Are you sure you want to delete this admin?')) {
+            fetch('../backend/delete_admin.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ admin_id: adminId })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Admin deleted successfully!');
+                    loadAdminsList();
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while deleting the admin.');
+            });
+        }
+    }
+
+    // Edit admin password function
+    function editAdminPassword(adminId, username) {
+        const newPassword = prompt(`Set a new password for ${username} (min 6 chars):`);
+        if (newPassword === null) return; // canceled
+        if (newPassword.length < 6) {
+            alert('Password must be at least 6 characters long.');
+            return;
+        }
+
+        fetch('../backend/update_admin.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ admin_id: adminId, password: newPassword })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('Password updated successfully!');
+                loadAdminsList();
+            } else {
+                alert('Error: ' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating the admin password.');
+        });
     }
 </script>
+
+<script src="script.js"></script>
 
 </body>
 </html>
