@@ -45,7 +45,8 @@ if ($stmt->execute()) {
     $_SESSION['user_id'] = $userId;
     jsonResponse(['success' => true, 'message' => 'Registration successful', 'user' => ['customer_id' => $userId, 'first_name' => $first_name, 'last_name' => $last_name, 'email' => $email, 'address' => $address]]);
 } else {
-    handleError('Registration failed: ' . $conn->error, 500);
+    $err = $stmt->error ?: $conn->error;
+    handleError('Registration failed: ' . $err, 500);
 }
-$statement = null; // close
+$stmt->close();
 ?>
