@@ -458,3 +458,114 @@
 .toggle-password:hover {
     color: var(--dark);
 }
+
+/* ── BACK TO TOP BUTTON ── */
+.scroll-to-top {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  background-color: var(--dark);
+  color: var(--cream);
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s, transform 0.3s, background-color 0.2s;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.scroll-to-top.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.scroll-to-top:hover {
+  background-color: var(--brown);
+  transform: translateY(-3px); /* Little hover bounce! */
+}
+
+/* ── ACCOUNT DROPDOWN ── */
+.account-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.account-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 20px); /* Pushes it down below the header */
+  right: -20px; /* Aligns it nicely with the edge */
+  background-color: var(--cream);
+  min-width: 240px;
+  border: 1px solid var(--sand);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 200;
+  padding: 12px 0;
+}
+
+/* The little triangle pointer pointing up to the button */
+.account-dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 34px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--cream);
+  border-top: 1px solid var(--sand);
+  border-left: 1px solid var(--sand);
+  transform: rotate(45deg);
+}
+
+/* This class gets added by JavaScript to make it visible */
+.account-dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-header {
+  padding: 8px 24px 16px;
+  border-bottom: 1px solid var(--sand);
+  margin-bottom: 8px;
+}
+
+.dropdown-name {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--dark);
+  font-weight: 500;
+  display: block;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 10px 24px;
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  font-family: var(--sans);
+}
+
+.dropdown-item:hover {
+  background-color: var(--sand);
+  color: var(--dark);
+}
+
+.dropdown-divider {
+  border: none;
+  border-top: 1px solid var(--sand);
+  margin: 8px 0;
+}

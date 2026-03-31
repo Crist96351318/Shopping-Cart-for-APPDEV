@@ -123,9 +123,6 @@
             <div class="form-actions">
                 <button type="button" class="btn-primary" style="width: 100%;">Sign In</button>
             </div>
-            <div style="margin-top: 16px; text-align: center;">
-                <a href="#" style="font-size: 11px; color: var(--brown); text-decoration: underline;">Forgot Password?</a>
-            </div>
         </form>
         <a href="register.php" class="toggle-link">Don't have an account? Create one</a>
     </div>

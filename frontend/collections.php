@@ -34,6 +34,13 @@
     </nav>
     <div class="logo">le parfum</div>
     <div class="header-actions">
+      <button class="search-btn">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="8"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+  Search
+    </button>
       <button>Account</button>
       <button class="cart-btn">
         Cart <span class="cart-count">0</span>
@@ -58,6 +65,15 @@
     <p>© 2026 Lumière Skincare. All rights reserved.</p>
   </div>
 </footer>
+
+<button id="scrollToTopBtn" class="scroll-to-top" title="Go to top">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="12" y1="19" x2="12" y2="5"></line>
+    <polyline points="5 12 12 5 19 12"></polyline>
+  </svg>
+</button>
+
+<script src="script.js"></script>
 
 </body>
 </html>

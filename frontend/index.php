@@ -41,7 +41,21 @@
   </svg>
   Search
     </button>
-      <button>Account</button>
+      <div class="account-dropdown-wrapper">
+        <button id="accountBtn" style="font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text);">Account</button>
+        
+        <div id="accountDropdown" class="account-dropdown-menu">
+          <div class="dropdown-header">
+            <span class="dropdown-name">Cristian Aton</span>
+          </div>
+          <div class="dropdown-links">
+            <a href="#" class="dropdown-item">My Account (Customize Profile)</a>
+            <a href="#" class="dropdown-item">Settings (Password & Theme)</a>
+            <hr class="dropdown-divider">
+            <a href="#" class="dropdown-item" onclick="return false;">Logout</a>
+          </div>
+        </div>
+      </div>
       <button class="cart-btn">
         Cart
         <span class="cart-count">0</span>
@@ -56,7 +70,7 @@
     <h1 class="hero-title">Just like Men, Perfume is <br><em> Never Perfect Right Away; </em><br><em>You have to let it Seduce You.</em></h1>
     <p class="hero-sub">Masterfully blended fragrances crafted with rare aromatic notes and captivating essences for an unforgettable signature scent.</p>
     <div class="hero-actions">
-      <button class="btn-primary">Shop Now!</button>
+      <a href="fragrances.php" class="btn-primary" style="display: inline-block; text-align: center;">Shop Now!</a>
       <a href="our_story.php" class="btn-outline" style="display: inline-flex; align-items: center; justify-content: center;">Our Story</a>
     </div>
   </div>
@@ -316,5 +330,14 @@
   </div>
 </footer>
 
+
+<button id="scrollToTopBtn" class="scroll-to-top" title="Go to top">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="12" y1="19" x2="12" y2="5"></line>
+    <polyline points="5 12 12 5 19 12"></polyline>
+  </svg>
+</button>
+
+<script src="script.js"></script>
 </body>
 </html>
