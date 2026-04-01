@@ -1,3 +1,13 @@
+<?php
+require_once __DIR__ . '/../backend/config.php';
+require_once __DIR__ . '/../backend/functions.php';
+
+// Secure admin page: require a valid logged-in admin session
+if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+    header('Location: login.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -113,21 +123,45 @@
 <body>
 
 <script>
-    // Protect admin page - only admins can access
-    function checkAdminAccess() {
-        const isAdmin = localStorage.getItem('isAdmin') === 'true';
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        
-        if (!isLoggedIn || !isAdmin) {
-            alert('Access Denied: Admin privileges required.');
-            window.location.href = 'index.php';
+    // Protect admin page - only admins can access, using server session + local storage
+    async function checkAdminAccess() {
+        try {
+            const response = await fetch('../backend/user.php', {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Server session not authenticated');
+            }
+
+            const data = await response.json();
+            if (!data.success || !data.user || !data.user.is_admin) {
+                throw new Error('Not an admin');
+            }
+
+            localStorage.setItem('user', JSON.stringify(data.user));
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('isAdmin', 'true');
+            return true;
+
+        } catch (err) {
+            localStorage.removeItem('user');
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('isAdmin');
+            alert('Access Denied: Admin privileges required. Please log in again.');
+            window.location.href = 'login.php';
             return false;
         }
-        return true;
     }
-    
-    if (!checkAdminAccess()) {
-        document.body.innerHTML = '';
+
+    if (document.readyState !== 'loading') {
+        checkAdminAccess();
+    } else {
+        document.addEventListener('DOMContentLoaded', checkAdminAccess);
     }
 </script>
 
