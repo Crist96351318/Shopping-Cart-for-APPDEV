@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "pwa-chrome",
+            "request": "launch",
+            "name": "Launch Chrome/Brave (Generic)",
+            "url": "http://localhost/appdev/Shopping-Cart-for-APPDEV/frontend/${fileBasename}",
+            "webRoot": "${workspaceFolder}/frontend",
+            "sourceMaps": true,
+            "runtimeExecutable": "/usr/bin/brave"
+        }
+    ]
+}

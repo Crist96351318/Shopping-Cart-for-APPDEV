@@ -98,11 +98,32 @@ function getLoggedInUser($conn) {
     }
 
     $userId = intval($_SESSION['user_id']);
-    $stmt = $conn->prepare('SELECT customer_id, first_name, last_name, email, address, created_at FROM users WHERE customer_id = ? LIMIT 1');
+
+    // Admin users may be stored in admin_users table while regular users are in users table.
+    if (isset($_SESSION['is_admin']) && intval($_SESSION['is_admin']) === 1) {
+        $stmt = $conn->prepare('SELECT admin_id AS customer_id, username AS first_name, "" AS last_name, email, "" AS address, created_at FROM admin_users WHERE admin_id = ? LIMIT 1');
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+
+        if ($user) {
+            $user['is_admin'] = 1;
+            return $user;
+        }
+    }
+
+    $stmt = $conn->prepare('SELECT customer_id, first_name, last_name, email, address, created_at, COALESCE(is_admin, 0) AS is_admin FROM users WHERE customer_id = ? LIMIT 1');
     $stmt->bind_param('i', $userId);
     $stmt->execute();
     $result = $stmt->get_result();
-    return $result->fetch_assoc();
+    $user = $result->fetch_assoc();
+
+    if ($user) {
+        $user['is_admin'] = intval($user['is_admin']);
+    }
+
+    return $user;
 }
 
 function requireLogin() {
