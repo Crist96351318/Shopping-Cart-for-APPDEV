@@ -63,13 +63,13 @@
     </div>
 
     <div class="story-content" style="font-family: var(--serif); font-size: 21px; color: var(--dark); font-weight: 300; line-height: 1.8; text-align: justify;">
-        <p style="margin-bottom: 28px;">For Cristian, the world was never experienced through colors or sounds, but through the invisible, intricate architecture of scent. From a young age, he possessed a rare gift—an absolute, unyielding olfactory precision. While others saw a garden, he perceived a symphony of volatile molecules: the damp earth, the sharp green of crushed stems, and the intoxicating, fleeting breath of blooming petals.</p>
-
-        <p style="margin-bottom: 28px;">Perfume, in his eyes, is not merely a cosmetic accessory. It is a vessel of memory, a way to capture the ephemeral beauty of the world and make it immortal. He realized early on that a scent could preserve a moment in time far better than a photograph ever could. The goal was never just to create something that smelled pleasant; it was an obsession to capture the very soul of the ingredients.</p>
-
-        <p style="margin-bottom: 28px;">Driven by a singular, consuming passion, Cristian mastered the ancient arts of enfleurage and distillation. He sought to isolate the essence of nature without compromising its pure, original form. Every bottle crafted in the atelier of <em>Le Parfum</em> is a culmination of this lifelong devotion: a perfect harmony of top, heart, and base notes designed to evoke emotion, awaken dormant memories, and become an unforgettable signature.</p>
-
-        <p style="text-align: center; font-style: italic; margin-top: 48px; font-size: 24px;">Welcome to his life's work. Welcome to the true essence of fragrance.</p>
+        <p style="margin-bottom: 28px;">For us, the world is not merely experienced through colors or sounds, but through the invisible, intricate architecture of scent. From the very beginning, we are drawn to the subtle language of aroma—where others see a garden, we perceive a symphony of volatile molecules: the damp earth, the sharp green of crushed stems, and the intoxicating, fleeting breath of blooming petals.</p> 
+        
+        <p style="margin-bottom: 28px;">Perfume, to us, is not simply a cosmetic accessory. It is a vessel of memory, a way to capture the ephemeral beauty of the world and make it endure. We believe that a scent can preserve a moment in time far more vividly than a photograph ever could. Our purpose is not just to create something pleasant, but to capture the very soul of each ingredient.</p> 
+        
+        <p style="margin-bottom: 28px;">Driven by a shared and unwavering passion, we embrace the ancient arts of enfleurage and distillation. We strive to isolate the essence of nature while preserving its pure, original form. Every bottle crafted in the atelier of <em>Le Parfum</em> reflects this devotion: a harmonious blend of top, heart, and base notes designed to evoke emotion, awaken memories, and become a signature that lingers.</p> 
+        
+        <p style="text-align: center; font-style: italic; margin-top: 48px; font-size: 24px;">Welcome to our life's work. Welcome to the true essence of fragrance.</p>
     </div>
 </main>
 

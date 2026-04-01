@@ -177,9 +177,9 @@
                 <input type="number" name="stock_quantity" placeholder="Stock Quantity" min="0" required style="padding: 10px; border: 1px solid var(--taupe)">
                 <input type="url" name="image_path" placeholder="Primary Image URL" style="padding: 10px; border: 1px solid var(--taupe); grid-column: 1 / span 2;">
                 <div style="grid-column: 1 / span 2;">
-                    <label style="display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--brown); margin-bottom: 8px;">Additional Images</label>
+                    <label style="display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--brown); margin-bottom: 8px;">Add Image</label>
                     <div id="addAdditionalImages"></div>
-                    <button type="button" onclick="addImageFieldToAdd()" style="background: #f0f0f0; border: 1px solid #ccc; padding: 5px 10px; margin-top: 5px;">+ Add Image</button>
+                    <button type="button" onclick="addImageFieldToAdd()" style="background: #f0f0f0; border: 1px solid #ccc; padding: 5px 10px; margin-top: 5px;">+ Upload Image</button>
                 </div>
                 <input type="text" name="description" placeholder="Description" style="padding: 10px; border: 1px solid var(--taupe); grid-column: 1 / span 2;">
                 <button type="submit" class="btn-primary" style="grid-column: 1 / span 2;">Add New Perfume</button>
