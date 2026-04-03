@@ -326,6 +326,10 @@ function renderOrderHistory(orders) {
     });
 }
 
+async function getOrderConfirmation(orderId) {
+    return await apiRequest(`order_confirmation.php?order_id=${orderId}`);
+}
+
 async function loadOrderConfirmation() {
     const urlParams = new URLSearchParams(window.location.search);
     const orderId = urlParams.get('order_id');

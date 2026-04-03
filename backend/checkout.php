@@ -9,16 +9,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 requireLogin();
 $user = getLoggedInUser($conn);
-$cartDetails = getCartDetails($conn);
+$cartData = getCart($conn, $user['customer_id']);
 
-if (empty($cartDetails['items'])) {
+if (empty($cartData['items'])) {
     handleError('Cart is empty', 400);
 }
 
 $conn->begin_transaction();
 
 try {
-    $total = $cartDetails['total'];
+    $total = $cartData['total'];
     $stmt = $conn->prepare('INSERT INTO orders (customer_id, total_amount, status) VALUES (?, ?, ?)');
     $status = 'Pending';
     $stmt->bind_param('ids', $user['customer_id'], $total, $status);
@@ -28,7 +28,7 @@ try {
     $orderId = $conn->insert_id;
 
     $stmtItem = $conn->prepare('INSERT INTO order_details (order_id, product_id, quantity, price_at_purchase) VALUES (?, ?, ?, ?)');
-    foreach ($cartDetails['items'] as $item) {
+    foreach ($cartData['items'] as $item) {
         $pid = $item['product_id'];
         $qty = $item['quantity'];
         $price = $item['price'];

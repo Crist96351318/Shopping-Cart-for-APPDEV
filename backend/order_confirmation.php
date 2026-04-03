@@ -24,6 +24,10 @@ if (!$order) {
     handleError('Order not found or access denied', 404);
 }
 
+// Convert numeric fields
+$order['order_id'] = intval($order['order_id']);
+$order['total_amount'] = floatval($order['total_amount']);
+
 // Fetch items
 $stmtItems = $conn->prepare('SELECT od.quantity, od.price_at_purchase, p.name FROM order_details od JOIN products p ON od.product_id = p.product_id WHERE od.order_id = ?');
 $stmtItems->bind_param('i', $order_id);
@@ -32,7 +36,11 @@ $itemsResult = $stmtItems->get_result();
 
 $items = [];
 while ($row = $itemsResult->fetch_assoc()) {
-    $items[] = $row;
+    $items[] = [
+        'name' => $row['name'],
+        'quantity' => intval($row['quantity']),
+        'price_at_purchase' => floatval($row['price_at_purchase'])
+    ];
 }
 
 $order['items'] = $items;

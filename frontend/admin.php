@@ -211,6 +211,30 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
                 <div class="stat-value" id="completedOrdersValue">0</div>
             </div>
         </div>
+
+        <div style="margin-top: 60px;">
+            <div class="admin-table-card">
+                <div class="table-header">
+                    <h3>Recent Transactions</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentTransactionsBody">
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding: 24px;">Loading recent orders...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </section>
 
     <section id="products-section" style="display:none;">
@@ -386,6 +410,9 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
                 const completedCount = stats.recent_orders.filter(o => o.status === 'Completed').length;
                 document.getElementById('completedOrdersValue').textContent = completedCount;
                 
+                // Render recent transactions table
+                renderRecentTransactions(stats.recent_orders);
+                
                 console.log('Dashboard stats loaded:', stats);
             } else {
                 console.error('Failed to load dashboard stats');
@@ -393,6 +420,31 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
         })
         .catch(error => {
             console.error('Error loading dashboard stats:', error);
+        });
+    }
+
+    // Render recent transactions on dashboard
+    function renderRecentTransactions(recentOrders) {
+        const tbody = document.getElementById('recentTransactionsBody');
+        tbody.innerHTML = '';
+
+        if (!recentOrders || recentOrders.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 24px;">No recent orders</td></tr>';
+            return;
+        }
+
+        recentOrders.forEach(order => {
+            const orderDate = new Date(order.date).toLocaleDateString();
+            const statusClass = order.status.toLowerCase();
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>#${order.order_id}</td>
+                <td>${order.customer_name || 'Guest'}</td>
+                <td>${orderDate}</td>
+                <td>$${parseFloat(order.amount).toFixed(2)}</td>
+                <td><span class="status ${statusClass}">${order.status}</span></td>
+            `;
+            tbody.appendChild(row);
         });
     }
 
@@ -521,32 +573,50 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
 
     // Load orders list
     function loadOrdersList() {
-        fetch('../backend/get_all_orders.php')
-        .then(response => response.json())
+        console.log('loadOrdersList called');
+        fetch('../backend/get_all_orders.php', { credentials: 'same-origin' })
+        .then(response => {
+            console.log('get_all_orders response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
         .then(result => {
+            console.log('get_all_orders result:', result);
             if (result.success) {
                 renderOrdersTable(result.orders);
             } else {
-                document.getElementById('ordersTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center; color: #cc6666;">Failed to load orders</td></tr>';
+                document.getElementById('ordersTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center; color: #cc6666;">Failed to load orders: ' + (result.message || 'Unknown error') + '</td></tr>';
             }
         })
         .catch(error => {
             console.error('Error loading orders:', error);
-            document.getElementById('ordersTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center; color: #cc6666;">Error loading orders</td></tr>';
+            document.getElementById('ordersTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center; color: #cc6666;">Error: ' + error.message + '</td></tr>';
         });
     }
 
     // Render orders table
     function renderOrdersTable(orders) {
+        console.log('renderOrdersTable called with:', orders);
         const tbody = document.getElementById('ordersTableBody');
+        console.log('tbody element:', tbody);
+        
+        if (!tbody) {
+            console.error('ordersTableBody element not found!');
+            return;
+        }
+        
         tbody.innerHTML = '';
 
         if (!orders || orders.length === 0) {
+            console.log('No orders to render');
             tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 24px;">No orders found</td></tr>';
             return;
         }
 
-        orders.forEach(order => {
+        console.log('Rendering ' + orders.length + ' orders');
+        orders.forEach((order, index) => {
             const orderDate = new Date(order.order_date).toLocaleDateString();
             const statusClass = order.status.toLowerCase();
             const row = document.createElement('tr');
@@ -567,7 +637,9 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
                 </td>
             `;
             tbody.appendChild(row);
+            console.log('Order row ' + (index + 1) + ' added');
         });
+        console.log('All ' + orders.length + ' orders rendered');
     }
 
     // Update order status
