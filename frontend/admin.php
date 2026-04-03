@@ -115,6 +115,8 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
         .status { padding: 6px 14px; border-radius: 20px; font-size: 9.5px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 500; }
         .status.pending { background: #fdf3e1; color: #b7791f; border: 1px solid #f7dfb5; }
         .status.shipped { background: #e1f0fd; color: #2b6cb0; border: 1px solid #c2e0fa; }
+        .status.completed { background: #e1f5e1; color: #2d7f2d; border: 1px solid #c2f0c2; }
+        .status.cancelled { background: #fde1e1; color: #a32f2f; border: 1px solid #f5c2c2; }
 
         select { padding: 8px 12px; border: 1px solid var(--taupe); font-family: var(--sans); font-size: 12px; color: var(--text); outline: none; background: #fff; cursor: pointer; }
         select:focus { border-color: var(--dark); }
@@ -183,15 +185,30 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">Total Revenue</div>
-                <div class="stat-value">$12,450.00</div>
+                <div class="stat-value" id="totalRevenueValue">$0.00</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Active Orders</div>
-                <div class="stat-value">18</div>
+                <div class="stat-value" id="activeOrdersValue">0</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Stock Alerts</div>
-                <div class="stat-value" style="color: #cc6666;">4 Low</div>
+                <div class="stat-value" style="color: #cc6666;" id="stockAlertsValue">0 Low</div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 60px;">
+            <div class="stat-card">
+                <div class="stat-label">Total Products</div>
+                <div class="stat-value" id="totalProductsValue">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Customers</div>
+                <div class="stat-value" id="totalCustomersValue">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Completed Orders</div>
+                <div class="stat-value" id="completedOrdersValue">0</div>
             </div>
         </div>
     </section>
@@ -252,26 +269,16 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
                     <tr>
                         <th>Order ID</th>
                         <th>Customer</th>
+                        <th>Email</th>
                         <th>Date</th>
                         <th>Amount</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="ordersTableBody">
                     <tr>
-                        <td>#8021</td>
-                        <td>Cristian Aton</td>
-                        <td>Mar 31, 2026</td>
-                        <td>$270.00</td>
-                        <td><span class="status pending">Pending</span></td>
-                        <td>
-                            <select>
-                                <option>Pending</option>
-                                <option>Shipped</option>
-                                <option>Completed</option>
-                            </select>
-                        </td>
+                        <td colspan="7" style="text-align:center; padding: 24px;">Loading orders...</td>
                     </tr>
                 </tbody>
             </table>
@@ -340,10 +347,53 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
         links.forEach(link => link.classList.remove('active'));
         if (event) event.currentTarget.classList.add('active');
         
-        // Load admins list when showing admins section
-        if (section === 'admins') {
+        // Load data based on section
+        if (section === 'analytics') {
+            loadDashboardStats();
+        } else if (section === 'admins') {
             loadAdminsList();
+        } else if (section === 'orders') {
+            loadOrdersList();
+        } else if (section === 'products') {
+            fetchProductsForAdmin();
         }
+    }
+
+    // Load dashboard stats
+    function loadDashboardStats() {
+        fetch('../backend/get_dashboard_stats.php')
+        .then(response => response.json())
+        .then(result => {
+            if (result.success && result.stats) {
+                const stats = result.stats;
+                
+                // Update total revenue
+                document.getElementById('totalRevenueValue').textContent = '$' + parseFloat(stats.total_revenue).toFixed(2);
+                
+                // Update active orders
+                document.getElementById('activeOrdersValue').textContent = stats.active_orders;
+                
+                // Update stock alerts
+                document.getElementById('stockAlertsValue').textContent = stats.low_stock_count + ' Low';
+                
+                // Update total products
+                document.getElementById('totalProductsValue').textContent = stats.total_products;
+                
+                // Update total customers
+                document.getElementById('totalCustomersValue').textContent = stats.total_customers;
+                
+                // Calculate completed orders count from recent orders
+                const completedCount = stats.recent_orders.filter(o => o.status === 'Completed').length;
+                document.getElementById('completedOrdersValue').textContent = completedCount;
+                
+                console.log('Dashboard stats loaded:', stats);
+            } else {
+                console.error('Failed to load dashboard stats');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading dashboard stats:', error);
+        });
     }
 
     // Handle admin registration form
@@ -466,6 +516,83 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
         .catch(error => {
             console.error('Error:', error);
             alert('An error occurred while updating the admin password.');
+        });
+    }
+
+    // Load orders list
+    function loadOrdersList() {
+        fetch('../backend/get_all_orders.php')
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                renderOrdersTable(result.orders);
+            } else {
+                document.getElementById('ordersTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center; color: #cc6666;">Failed to load orders</td></tr>';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading orders:', error);
+            document.getElementById('ordersTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center; color: #cc6666;">Error loading orders</td></tr>';
+        });
+    }
+
+    // Render orders table
+    function renderOrdersTable(orders) {
+        const tbody = document.getElementById('ordersTableBody');
+        tbody.innerHTML = '';
+
+        if (!orders || orders.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 24px;">No orders found</td></tr>';
+            return;
+        }
+
+        orders.forEach(order => {
+            const orderDate = new Date(order.order_date).toLocaleDateString();
+            const statusClass = order.status.toLowerCase();
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>#${order.order_id}</td>
+                <td>${order.customer_name || 'Guest'}</td>
+                <td>${order.email || '-'}</td>
+                <td>${orderDate}</td>
+                <td>$${parseFloat(order.total_amount).toFixed(2)}</td>
+                <td><span class="status ${statusClass}">${order.status}</span></td>
+                <td>
+                    <select onchange="updateOrderStatus(${order.order_id}, this.value)">
+                        <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                        <option value="Completed" ${order.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                        <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                    </select>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // Update order status
+    function updateOrderStatus(orderId, newStatus) {
+        fetch('../backend/update_order_status.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ order_id: orderId, status: newStatus })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                console.log('Order status updated successfully');
+                loadOrdersList();
+            } else {
+                alert('Error: ' + result.message);
+                loadOrdersList();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating the order status.');
+            loadOrdersList();
         });
     }
 
@@ -754,6 +881,11 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
         const editForm = document.querySelector('div[style*="position: fixed"]');
         if (editForm) editForm.remove();
     }
+
+    // Initialize dashboard on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadDashboardStats();
+    });
 </script>
 
 <script src="script.js"></script>
