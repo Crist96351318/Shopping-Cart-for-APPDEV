@@ -23,6 +23,25 @@
         .order-total { font-family: var(--serif); font-weight: 500; color: var(--dark); }
         .view-details { font-size: 11px; text-transform: uppercase; color: var(--brown); cursor: pointer; border: none; background: none; text-decoration: underline; }
         .no-orders { text-align: center; padding: 60px; color: var(--text); }
+        
+        /* Modal Styles */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: var(--warm-white); border: 1px solid var(--sand); max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; border-radius: 8px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid var(--sand); }
+        .modal-header h3 { font-family: var(--serif); font-size: 24px; margin: 0; color: var(--dark); }
+        .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text); }
+        .modal-body { padding: 20px; }
+        .order-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .info-group { }
+        .info-label { font-size: 10.5px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--brown); margin-bottom: 4px; }
+        .info-value { font-family: var(--serif); font-size: 16px; color: var(--dark); }
+        .order-items { margin-top: 30px; }
+        .items-title { font-family: var(--serif); font-size: 20px; margin-bottom: 20px; }
+        .item-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--sand); }
+        .item-name { font-family: var(--serif); color: var(--dark); }
+        .item-details { color: var(--text); font-size: 14px; }
+        .item-price { font-family: var(--serif); color: var(--dark); }
+        .order-total { font-family: var(--serif); font-size: 24px; color: var(--dark); text-align: right; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -86,6 +105,19 @@
         </tbody>
     </table>
 </main>
+
+<!-- Order Details Modal -->
+<div id="orderDetailsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Order Details</h3>
+            <button class="modal-close" onclick="closeOrderDetailsModal()">&times;</button>
+        </div>
+        <div id="orderDetailsContent">
+            <!-- Order details will be loaded here -->
+        </div>
+    </div>
+</div>
 
 <footer>
   <div class="footer-bottom" style="justify-content: center;">

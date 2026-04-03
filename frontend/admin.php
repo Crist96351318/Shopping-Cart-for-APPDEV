@@ -104,6 +104,20 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
         td { padding: 20px 16px; font-size: 14px; color: var(--text); border-bottom: 1px solid var(--cream); vertical-align: middle; }
         tr:hover td { background-color: var(--warm-white); }
 
+        /* Table column size preference for order details */
+        #orders-section table th:nth-child(4),
+        #orders-section table td:nth-child(4) { width: 45%; }
+        #orders-section table th:nth-child(5),
+        #orders-section table td:nth-child(5) { width: 10%; text-align: center; }
+        #orders-section table th:nth-child(6),
+        #orders-section table td:nth-child(6) { width: 12%; text-align: right; }
+        #orders-section table th:nth-child(7),
+        #orders-section table td:nth-child(7) { width: 10%; }
+        #orders-section table th:nth-child(8),
+        #orders-section table td:nth-child(8) { width: 8%; }
+        #orders-section table th:nth-child(9),
+        #orders-section table td:nth-child(9) { width: 10%; }
+
         /* Buttons & Actions */
         .btn-primary { background: var(--dark); color: var(--cream); padding: 14px 28px; border: none; font-family: var(--sans); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: 0.3s ease; }
         .btn-primary:hover { background: var(--brown); }
@@ -254,9 +268,13 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
                     <option value="Eau de Cologne">Eau de Cologne</option>
                     <option value="Eau Fraiche">Eau Fraiche</option>
                 </select>
-                <select id="productSortSelect" style="padding:8px;" onchange="applyProductFilters()">
+                <select id="nameSortSelect" style="padding:8px;" onchange="applyProductFilters()">
+                    <option value="">Name sort (none)</option>
                     <option value="name_asc">Name (A-Z)</option>
                     <option value="name_desc">Name (Z-A)</option>
+                </select>
+                <select id="priceSortSelect" style="padding:8px;" onchange="applyProductFilters()">
+                    <option value="">Price sort (none)</option>
                     <option value="price_asc">Price (Low-High)</option>
                     <option value="price_desc">Price (High-Low)</option>
                 </select>
@@ -331,9 +349,11 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
                     <tr>
                         <th>Order ID</th>
                         <th>Customer</th>
-                        <th>Email</th>
                         <th>Date</th>
-                        <th>Amount</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -503,7 +523,8 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
     function applyProductFilters() {
         const search = (document.getElementById('productSearchInput').value || '').toLowerCase();
         const category = document.getElementById('productCategoryFilter').value;
-        const sort = document.getElementById('productSortSelect').value;
+        const nameSort = document.getElementById('nameSortSelect').value;
+        const priceSort = document.getElementById('priceSortSelect').value;
         const stockSort = document.getElementById('stockSortSelect').value;
 
         let filtered = adminProductData.filter(p => {
@@ -512,14 +533,12 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
             return matchName && matchCategory;
         });
 
-        if (sort === 'name_asc') filtered.sort((a,b)=>a.name.localeCompare(b.name));
-        else if (sort === 'name_desc') filtered.sort((a,b)=>b.name.localeCompare(a.name));
-        else if (sort === 'price_asc') filtered.sort((a,b)=>a.price-b.price);
-        else if (sort === 'price_desc') filtered.sort((a,b)=>b.price-a.price);
-        else if (sort === 'stock_asc') filtered.sort((a,b)=>a.stock_quantity-b.stock_quantity);
-        else if (sort === 'stock_desc') filtered.sort((a,b)=>b.stock_quantity-a.stock_quantity);
+        if (nameSort === 'name_asc') filtered.sort((a,b)=>a.name.localeCompare(b.name));
+        else if (nameSort === 'name_desc') filtered.sort((a,b)=>b.name.localeCompare(a.name));
 
-        // stockSortSelect can additionally control stock direction, with fallback to sort if stock type not set
+        if (priceSort === 'price_asc') filtered.sort((a,b)=>a.price-b.price);
+        else if (priceSort === 'price_desc') filtered.sort((a,b)=>b.price-a.price);
+
         if (stockSort === 'stock_asc') filtered.sort((a,b)=>a.stock_quantity-b.stock_quantity);
         else if (stockSort === 'stock_desc') filtered.sort((a,b)=>b.stock_quantity-a.stock_quantity);
 
@@ -742,25 +761,53 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
         orders.forEach((order, index) => {
             const orderDate = new Date(order.order_date).toLocaleDateString();
             const statusClass = order.status.toLowerCase();
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>#${order.order_id}</td>
-                <td>${order.customer_name || 'Guest'}</td>
-                <td>${order.email || '-'}</td>
-                <td>${orderDate}</td>
-                <td>$${parseFloat(order.total_amount).toFixed(2)}</td>
-                <td><span class="status ${statusClass}">${order.status}</span></td>
-                <td>
-                    <select onchange="updateOrderStatus(${order.order_id}, this.value)">
-                        <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                        <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
-                        <option value="Completed" ${order.status === 'Completed' ? 'selected' : ''}>Completed</option>
-                        <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-                    </select>
-                </td>
-            `;
-            tbody.appendChild(row);
-            console.log('Order row ' + (index + 1) + ' added');
+            const items = order.items || [];
+
+            if (items.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>#${order.order_id}</td>
+                    <td>${order.customer_name || 'Guest'}</td>
+                    <td>${orderDate}</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>$${parseFloat(order.total_amount).toFixed(2)}</td>
+                    <td><span class="status ${statusClass}">${order.status}</span></td>
+                    <td>
+                        <select onchange="updateOrderStatus(${order.order_id}, this.value)">
+                            <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                            <option value="Completed" ${order.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                            <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                    </td>
+                `;
+                tbody.appendChild(row);
+                return;
+            }
+
+            items.forEach((item, itemIndex) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${itemIndex === 0 ? '#' + order.order_id : ''}</td>
+                    <td>${itemIndex === 0 ? (order.customer_name || 'Guest') : ''}</td>
+                    <td>${itemIndex === 0 ? orderDate : ''}</td>
+                    <td>${item.product_name || 'Unknown item'}</td>
+                    <td style="text-align: center;">${item.quantity}</td>
+                    <td style="text-align: right;">$${parseFloat(item.price_at_purchase).toFixed(2)}</td>
+                    <td>${itemIndex === 0 ? '$' + parseFloat(order.total_amount).toFixed(2) : ''}</td>
+                    <td>${itemIndex === 0 ? `<span class="status ${statusClass}">${order.status}</span>` : ''}</td>
+                    <td>${itemIndex === 0 ? `<select onchange="updateOrderStatus(${order.order_id}, this.value)">
+                            <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                            <option value="Completed" ${order.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                            <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>` : ''}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            console.log('Order row ' + (index + 1) + ' added, ' + items.length + ' item rows');
         });
         console.log('All ' + orders.length + ' orders rendered');
     }

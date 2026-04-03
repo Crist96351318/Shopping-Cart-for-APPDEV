@@ -35,14 +35,31 @@ $orders = [];
 
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
+        $orderId = intval($row['order_id']);
+
+        // Retrieve itemized details
+        $detailsStmt = $conn->prepare("SELECT od.product_id, od.quantity, od.price_at_purchase, p.name AS product_name FROM order_details od LEFT JOIN products p ON od.product_id = p.product_id WHERE od.order_id = ?");
+        $detailsStmt->bind_param('i', $orderId);
+        $detailsStmt->execute();
+        $detailsResult = $detailsStmt->get_result();
+        $items = [];
+        while ($detail = $detailsResult->fetch_assoc()) {
+            $items[] = [
+                'product_id' => intval($detail['product_id']),
+                'product_name' => $detail['product_name'] ?? 'Unknown',
+                'quantity' => intval($detail['quantity']),
+                'price_at_purchase' => floatval($detail['price_at_purchase'])
+            ];
+        }
+
         $orders[] = [
-            'order_id' => intval($row['order_id']),
+            'order_id' => $orderId,
             'customer_id' => intval($row['customer_id']),
             'customer_name' => trim(($row['first_name'] ?? '') . ' ' . ($row['last_name'] ?? '')),
-            'email' => $row['email'] ?? '',
             'order_date' => $row['order_date'],
             'total_amount' => floatval($row['total_amount']),
-            'status' => $row['status'] ?? 'Pending'
+            'status' => $row['status'] ?? 'Pending',
+            'items' => $items
         ];
     }
 }

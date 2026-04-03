@@ -126,6 +126,10 @@ async function getOrderHistory() {
     return await apiRequest('order_history.php');
 }
 
+async function getOrderConfirmation(orderId) {
+    return await apiRequest(`order_confirmation.php?order_id=${orderId}`);
+}
+
 async function handleAddToCart(productId) {
     try {
         const data = await addToCart(productId);
@@ -330,8 +334,72 @@ function renderOrderHistory(orders) {
     });
 }
 
-async function getOrderConfirmation(orderId) {
-    return await apiRequest(`order_confirmation.php?order_id=${orderId}`);
+async function viewOrderDetails(orderId) {
+    try {
+        const data = await getOrderConfirmation(orderId);
+        renderOrderDetailsModal(data.order);
+        document.getElementById('orderDetailsModal').style.display = 'flex';
+    } catch (error) {
+        showMessage('Failed to load order details: ' + error.message);
+    }
+}
+
+function closeOrderDetailsModal() {
+    document.getElementById('orderDetailsModal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('orderDetailsModal');
+    if (modal && event.target === modal) {
+        closeOrderDetailsModal();
+    }
+});
+
+function renderOrderDetailsModal(order) {
+    const contentEl = document.getElementById('orderDetailsContent');
+    if (!contentEl) return;
+    
+    const orderDate = new Date(order.order_date).toLocaleDateString();
+    
+    contentEl.innerHTML = `
+        <div class="modal-body">
+            <div class="order-info">
+                <div class="info-group">
+                    <div class="info-label">Order Number</div>
+                    <div class="info-value">#${order.order_id}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Order Date</div>
+                    <div class="info-value">${orderDate}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Status</div>
+                    <div class="info-value">${order.status}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Total Amount</div>
+                    <div class="info-value">$${order.total_amount.toFixed(2)}</div>
+                </div>
+            </div>
+            
+            <div class="order-items">
+                <h3 class="items-title">Order Items</h3>
+                ${order.items.map(item => `
+                    <div class="item-row">
+                        <div>
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-details">Quantity: ${item.quantity}</div>
+                        </div>
+                        <div class="item-price">$${(item.price_at_purchase * item.quantity).toFixed(2)}</div>
+                    </div>
+                `).join('')}
+                <div class="order-total">
+                    <strong>Total: $${order.total_amount.toFixed(2)}</strong>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 async function loadOrderConfirmation() {
@@ -399,6 +467,10 @@ function renderOrderConfirmation(order) {
 function updateAccountDropdown(user) {
     const dropdownName = document.querySelector('.dropdown-name');
     const cartBtn = document.querySelector('.cart-btn');
+    const loginLink = document.querySelector('.dropdown-item[href="login.php"]');
+    const registerLink = document.querySelector('.dropdown-item[href="register.php"]');
+    const divider = document.querySelector('.dropdown-divider');
+    const logoutLink = document.querySelector('.dropdown-item.logout-link');
 
     if (dropdownName) {
         dropdownName.textContent = user ? `${user.first_name} ${user.last_name}` : 'Guest';
@@ -408,21 +480,95 @@ function updateAccountDropdown(user) {
         cartBtn.style.display = user ? 'inline-flex' : 'none';
     }
 
-    const logoutLinks = document.querySelectorAll('.dropdown-item.logout-link, .dropdown-item[href="#logout"]');
-    logoutLinks.forEach(link => {
-        link.setAttribute('href', '#');
-        link.classList.add('logout-link');
-        link.onclick = async (event) => {
-            event.preventDefault();
-            await handleLogout();
-        };
-        link.style.cursor = 'pointer';
-    });
+    if (user) {
+        // Logged in: show Edit Profile, Order History, Change Theme, Logout
+        if (loginLink) loginLink.style.display = 'none';
+        if (registerLink) registerLink.style.display = 'none';
+        if (divider) divider.style.display = 'block';
+        if (logoutLink) {
+            logoutLink.style.display = 'block';
+            logoutLink.textContent = 'Logout';
+            logoutLink.setAttribute('href', '#');
+            logoutLink.classList.add('logout-link');
+            logoutLink.onclick = async (event) => {
+                event.preventDefault();
+                await handleLogout();
+            };
+            logoutLink.style.cursor = 'pointer';
+        }
 
-    if (!user) {
-        logoutLinks.forEach(link => {
-            link.onclick = (event) => event.preventDefault();
-        });
+        // Add additional logged-in options if they don't exist
+        let dropdownLinks = document.querySelector('.dropdown-links');
+        if (dropdownLinks) {
+            // Remove existing dynamic items
+            const existingItems = dropdownLinks.querySelectorAll('.dynamic-item');
+            existingItems.forEach(item => item.remove());
+
+            // Add Edit Profile
+            const editProfile = document.createElement('a');
+            editProfile.href = '#';
+            editProfile.className = 'dropdown-item dynamic-item';
+            editProfile.textContent = 'Edit Profile';
+            editProfile.onclick = (e) => {
+                e.preventDefault();
+                showMessage('Edit Profile feature coming soon!');
+            };
+            dropdownLinks.insertBefore(editProfile, divider);
+
+            // Add Order History
+            const orderHistory = document.createElement('a');
+            orderHistory.href = 'order_history.php';
+            orderHistory.className = 'dropdown-item dynamic-item';
+            orderHistory.textContent = 'Order History';
+            dropdownLinks.insertBefore(orderHistory, divider);
+
+            // Add Theme Toggle
+            const themeToggle = document.createElement('a');
+            themeToggle.href = '#';
+            themeToggle.className = 'dropdown-item dynamic-item';
+            const isDark = document.documentElement.classList.contains('dark-theme');
+            themeToggle.textContent = isDark ? 'Toggle Light Theme' : 'Toggle Dark Theme';
+            themeToggle.onclick = (e) => {
+                e.preventDefault();
+                toggleDarkTheme();
+            };
+            dropdownLinks.insertBefore(themeToggle, divider);
+        }
+    } else {
+        // Guest: show Login, Register, hide other items
+        if (loginLink) loginLink.style.display = 'block';
+        if (registerLink) registerLink.style.display = 'block';
+        if (divider) divider.style.display = 'block';
+        if (logoutLink) logoutLink.style.display = 'none';
+
+        // Remove dynamic items
+        const dynamicItems = document.querySelectorAll('.dynamic-item');
+        dynamicItems.forEach(item => item.remove());
+    }
+}
+
+function toggleDarkTheme() {
+    const html = document.documentElement;
+    const isDark = html.classList.contains('dark-theme');
+    const themeToggle = document.querySelector('.dropdown-item[onclick*="toggleDarkTheme"]');
+    
+    if (isDark) {
+        html.classList.remove('dark-theme');
+        localStorage.setItem('theme', 'light');
+        if (themeToggle) themeToggle.textContent = 'Toggle Dark Theme';
+        showMessage('Switched to light theme');
+    } else {
+        html.classList.add('dark-theme');
+        localStorage.setItem('theme', 'dark');
+        if (themeToggle) themeToggle.textContent = 'Toggle Light Theme';
+        showMessage('Switched to dark theme');
+    }
+}
+
+function loadTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark-theme');
     }
 }
 
@@ -573,6 +719,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", () => {
+    loadTheme();
     checkSession();
 
     // Attach form handlers if forms exist
