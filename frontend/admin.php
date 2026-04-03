@@ -300,7 +300,7 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody id="ordersTableBody">
+                <tbody id="adminOrdersList">
                     <tr>
                         <td colspan="7" style="text-align:center; padding: 24px;">Loading orders...</td>
                     </tr>
@@ -958,6 +958,106 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
     document.addEventListener('DOMContentLoaded', function() {
         loadDashboardStats();
     });
+
+    function showSection(section, event) {
+        if (event) event.preventDefault();
+
+        document.getElementById('analytics-section').style.display = 'none';
+        document.getElementById('products-section').style.display = 'none';
+        document.getElementById('orders-section').style.display = 'none';
+        document.getElementById('admins-section').style.display = 'none';
+
+        document.getElementById(section + '-section').style.display = 'block';
+
+        const links = document.querySelectorAll('.sidebar-nav a:not(.logout-btn)');
+        links.forEach(link => link.classList.remove('active'));
+        if (event) event.currentTarget.classList.add('active');
+
+        if (section === 'admins') {
+            loadAdminsList();
+        }
+        if (section === 'products') {
+            fetchProductsForAdmin();
+        }
+        // (Hmph) Add this to load orders when the tab is clicked!
+        if (section === 'orders') {
+            loadAdminOrders();
+        }
+    }
+
+    function loadAdminOrders() {
+        const tbody = document.getElementById('adminOrdersList');
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 24px;">Loading orders...</td></tr>';
+        
+        // I assume your backend file is named get_all_orders.php. Change it if it's different!
+        fetch('../backend/get_all_orders.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    renderAdminOrders(data.orders);
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 24px; color: #cc6666;">Error: ${data.message}</td></tr>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching orders:', error);
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 24px; color: #cc6666;">Failed to load orders.</td></tr>';
+            });
+    }
+
+    function renderAdminOrders(orders) {
+        const tbody = document.getElementById('adminOrdersList');
+        tbody.innerHTML = '';
+        
+        if (!orders || orders.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 24px;">No orders found.</td></tr>';
+            return;
+        }
+        
+        orders.forEach(order => {
+            const date = new Date(order.order_date).toLocaleDateString();
+            
+            // Format status class so the colors actually work
+            let statusClass = 'pending';
+            if (order.status.toLowerCase() === 'shipped') statusClass = 'shipped';
+            if (order.status.toLowerCase() === 'completed') statusClass = 'completed';
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>#${order.order_id}</td>
+                <td>${order.customer_name}</td>
+                <td>${order.email}</td>
+                <td>${date}</td>
+                <td>$${parseFloat(order.total_amount).toFixed(2)}</td>
+                <td><span class="status ${statusClass}">${order.status}</span></td>
+                <td>
+                    <select onchange="updateOrderStatus(${order.order_id}, this.value)">
+                        <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                        <option value="Completed" ${order.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                    </select>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Optional: Add this if you want the dropdowns to actually change the status
+    function updateOrderStatus(orderId, newStatus) {
+        fetch('../backend/update_order_status.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order_id: orderId, status: newStatus })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                loadAdminOrders(); // Reload to update badge colors
+            } else {
+                alert('Failed to update status: ' + data.message);
+            }
+        });
+    }
 </script>
 
 <script src="script.js"></script>
