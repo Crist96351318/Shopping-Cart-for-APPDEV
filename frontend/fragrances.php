@@ -182,82 +182,56 @@ function loadCategoryProducts(categoryId, categoryName) {
     const grid = document.getElementById(categoryId + '-grid');
     const content = document.getElementById(categoryId);
 
-    const url = `../backend/get_products_by_category.php?category=${encodeURIComponent(categoryName)}`;
-    console.log(`Fetching: ${url}`);
-    
-    fetch(url, { credentials: 'same-origin' })
-        .then(response => {
-            console.log(`Response status: ${response.status}`, response);
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            return response.text();
-        })
-        .then(text => {
-            console.log(`Raw response: ${text.substring(0, 200)}`);
-            let data;
-            try {
-                data = JSON.parse(text);
-            } catch (e) {
-                throw new Error(`Failed to parse JSON: ${e.message}\nRaw: ${text.substring(0, 300)}`);
-            }
-            
-            console.log(`[${categoryName}] Parsed data:`, data);
-            if (data.success && data.products && Array.isArray(data.products)) {
-                const products = data.products;
-                console.log(`[${categoryName}] Found ${products.length} products`);
-                renderProducts(grid, products);
-                content.dataset.loaded = 'true';
-            } else if (data.success && (!data.products || data.products.length === 0)) {
-                grid.innerHTML = '<div class="no-products">No products available in this category</div>';
+    if (window.fragranceProducts && window.fragranceProducts.length > 0) {
+        const products = window.fragranceProducts.filter(p => p.category_name && p.category_name.toLowerCase() === categoryName.toLowerCase());
+        renderCategoryProducts(grid, products);
+        content.dataset.loaded = 'true';
+        return;
+    }
+
+    fetch('../backend/get_products.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.fragranceProducts = data.products || [];
+                const products = window.fragranceProducts.filter(p => p.category_name && p.category_name.toLowerCase() === categoryName.toLowerCase());
+                renderCategoryProducts(grid, products);
                 content.dataset.loaded = 'true';
             } else {
-                throw new Error(data.message || 'Unknown API error');
+                grid.innerHTML = '<div class="error">Failed to load products</div>';
             }
         })
         .catch(error => {
-            console.error(`[${categoryName}] Error:`, error);
-            grid.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            console.error('Error loading products:', error);
+            grid.innerHTML = '<div class="error">Error loading products</div>';
         });
 }
 
-function renderProducts(container, products) {
-    console.log('renderProducts called with:', products);
-    
+function renderCategoryProducts(container, products) {
     if (!products || products.length === 0) {
         container.innerHTML = '<div class="no-products">No products available in this category</div>';
         return;
     }
 
-    const html = products.map(product => {
-        const imagePath = product.image_path && product.image_path.trim() ? product.image_path : '../assets/placeholder.png';
-        const productName = product.name || 'Unnamed Product';
-        const productPrice = parseFloat(product.price) || 0;
-        const productId = product.product_id || 0;
-        
-        return `
+    const html = products.map(product => `
         <div class="product-card">
             <div class="product-img-wrap">
-                <img src="${imagePath}" class="product-img" alt="${productName}" onerror="this.src='../assets/placeholder.png'">
+                <img src="${product.image_path || '../assets/placeholder.png'}" class="product-img" alt="${product.name}">
                 <div class="product-actions">
-                    <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(${productId})">Buy Now</button>
-                    <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(${productId})">Add to Cart</button>
+                    <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(${product.product_id})">Buy Now</button>
+                    <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(${product.product_id})">Add to Cart</button>
                 </div>
             </div>
-            <div class="product-name">${productName}</div>
-            <div class="product-price">$${productPrice.toFixed(2)}</div>
+            <div class="product-name">${product.name}</div>
+            <div class="product-price">$${product.price.toFixed(2)}</div>
         </div>
-        `;
-    }).join('');
+    `).join('');
 
     container.innerHTML = html;
-    console.log('renderProducts: HTML updated');
 }
 
-// Preload all category products on page show using category API endpoint
+// Preload all category products on page show and keep data in window cache
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOMContentLoaded: Starting product preload');
-    
     const categories = {
         extrait: 'Extrait de Parfum',
         edp: 'Eau de Parfum',
@@ -266,20 +240,32 @@ document.addEventListener('DOMContentLoaded', function() {
         fraiche: 'Eau Fraiche'
     };
 
-    Object.entries(categories).forEach(([id, name]) => {
-        const content = document.getElementById(id);
-        if (!content) {
-            console.warn(`Category element not found: ${id}`);
-            return;
-        }
-        const grid = document.getElementById(id + '-grid');
-        if (grid) {
-            grid.innerHTML = '<div class="loading">Loading products...</div>';
-        }
+    // Perform a single bulk fetch once
+    fetch('../backend/get_products.php')
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to retrieve products');
+            }
+            window.fragranceProducts = data.products || [];
 
-        console.log(`Loading category: ${name} (${id})`);
-        loadCategoryProducts(id, name);
-    });
+            Object.entries(categories).forEach(([id, name]) => {
+                const content = document.getElementById(id);
+                if (content) {
+                    const grid = document.getElementById(id + '-grid');
+                    const products = window.fragranceProducts.filter(p => p.category_name && p.category_name.toLowerCase() === name.toLowerCase());
+                    renderCategoryProducts(grid, products);
+                    content.dataset.loaded = 'true';
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error preloading products:', error);
+            Object.keys(categories).forEach(id => {
+                const grid = document.getElementById(id + '-grid');
+                if (grid) grid.innerHTML = '<div class="error">Unable to load products</div>';
+            });
+        });
 });
 </script>
 
