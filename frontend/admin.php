@@ -259,6 +259,9 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
                     <option value="name_desc">Name (Z-A)</option>
                     <option value="price_asc">Price (Low-High)</option>
                     <option value="price_desc">Price (High-Low)</option>
+                </select>
+                <select id="stockSortSelect" style="padding:8px;" onchange="applyProductFilters()">
+                    <option value="">Stock sort (none)</option>
                     <option value="stock_asc">Stock (Low-High)</option>
                     <option value="stock_desc">Stock (High-Low)</option>
                 </select>
@@ -501,6 +504,7 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
         const search = (document.getElementById('productSearchInput').value || '').toLowerCase();
         const category = document.getElementById('productCategoryFilter').value;
         const sort = document.getElementById('productSortSelect').value;
+        const stockSort = document.getElementById('stockSortSelect').value;
 
         let filtered = adminProductData.filter(p => {
             const matchName = p.name.toLowerCase().includes(search) || (p.description || '').toLowerCase().includes(search) || (p.category_name || '').toLowerCase().includes(search);
@@ -514,6 +518,10 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
         else if (sort === 'price_desc') filtered.sort((a,b)=>b.price-a.price);
         else if (sort === 'stock_asc') filtered.sort((a,b)=>a.stock_quantity-b.stock_quantity);
         else if (sort === 'stock_desc') filtered.sort((a,b)=>b.stock_quantity-a.stock_quantity);
+
+        // stockSortSelect can additionally control stock direction, with fallback to sort if stock type not set
+        if (stockSort === 'stock_asc') filtered.sort((a,b)=>a.stock_quantity-b.stock_quantity);
+        else if (stockSort === 'stock_desc') filtered.sort((a,b)=>b.stock_quantity-a.stock_quantity);
 
         renderProductsTable(filtered);
     }

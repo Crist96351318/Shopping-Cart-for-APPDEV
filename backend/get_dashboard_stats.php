@@ -33,11 +33,11 @@ $activeOrdersResult = $conn->query("
 $activeOrdersRow = $activeOrdersResult->fetch_assoc();
 $stats['active_orders'] = intval($activeOrdersRow['active_count'] ?? 0);
 
-// 3. Low Stock Products (less than 10 units)
+// 3. Out of Stock Products (quantity 0 or less)
 $lowStockResult = $conn->query("
     SELECT COUNT(*) as low_stock_count 
     FROM products 
-    WHERE stock_quantity < 10
+    WHERE stock_quantity <= 0
 ");
 $lowStockRow = $lowStockResult->fetch_assoc();
 $stats['low_stock_count'] = intval($lowStockRow['low_stock_count'] ?? 0);

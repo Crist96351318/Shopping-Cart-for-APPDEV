@@ -230,17 +230,21 @@ function renderProducts(products) {
     products.forEach(product => {
         const card = document.createElement('div');
         card.className = 'product-card';
+        const outOfStock = (product.stock_quantity === 0 || product.stock_quantity === '0' || product.stock_quantity === null || product.stock_quantity === undefined);
+        const stockBadge = outOfStock ? '<span class="stock-badge" style="color:#cc3333; font-weight:700; margin-right:8px;">Out of stock</span>' : `<span class="stock-badge" style="color:#2d7f2d; font-weight:700; margin-right:8px;">${product.stock_quantity} in stock</span>`;
+
         card.innerHTML = `
             <div class="product-img-wrap">
                 <div class="product-img" style="background-image: url('${product.image_path || '../assets/placeholder.png'}')"></div>
                 <div class="product-actions">
                     <button>Wishlist</button>
-                    <button class="add-cart" onclick="handleAddToCart(${product.product_id})">Add to Cart</button>
+                    <button class="add-cart" ${outOfStock ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''} onclick="handleAddToCart(${product.product_id})">${outOfStock ? 'Unavailable' : 'Add to Cart'}</button>
                 </div>
             </div>
             <div class="product-tag">${product.category_name || 'Fragrance'}</div>
             <div class="product-name">${product.name}</div>
             <div class="product-price">$${product.price.toFixed(2)}</div>
+            <div>${stockBadge}</div>
         `;
         grid.appendChild(card);
     });
