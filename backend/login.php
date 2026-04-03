@@ -67,15 +67,26 @@ if ($user && password_verify($password, $user['password'])) {
     $insertStmt->bind_param('sss', $defaultAdminUsername, $defaultAdminEmail, $defaultAdminPasswordHash);
     $insertStmt->execute();
 
-    // Ensure $user carries the same authenticated user shape
-    $user = [
-        'customer_id' => $conn->insert_id > 0 ? $conn->insert_id : ($user['customer_id'] ?? 0),
-        'first_name' => $defaultAdminUsername,
-        'last_name' => '',
-        'email' => $defaultAdminEmail,
-        'address' => '',
-        'is_admin' => 1
-    ];
+    // Fetch the inserted/updated admin row to get correct customer_id and ensure valid session ID
+    $selectStmt = $conn->prepare('SELECT admin_id AS customer_id, username AS first_name, "" AS last_name, email, "" AS address, 1 AS is_admin FROM admin_users WHERE email = ? LIMIT 1');
+    $selectStmt->bind_param('s', $defaultAdminEmail);
+    $selectStmt->execute();
+    $selectResult = $selectStmt->get_result();
+    $adminUser = $selectResult->fetch_assoc();
+
+    if ($adminUser) {
+        $user = $adminUser;
+    } else {
+        // fallback values, but this should not happen
+        $user = [
+            'customer_id' => 0,
+            'first_name' => $defaultAdminUsername,
+            'last_name' => '',
+            'email' => $defaultAdminEmail,
+            'address' => '',
+            'is_admin' => 1
+        ];
+    }
 }
 
 if (!$validCredentials) {
