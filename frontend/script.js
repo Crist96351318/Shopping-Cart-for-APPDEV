@@ -116,9 +116,10 @@ async function getProducts() {
     return await apiRequest('get_products.php');
 }
 
-async function checkout() {
+async function checkout(selectedIds = []) {
     return await apiRequest('checkout.php', {
-        method: 'POST'
+        method: 'POST',
+        body: JSON.stringify({ selected_product_ids: selectedIds })
     });
 }
 
@@ -140,6 +141,17 @@ async function handleAddToCart(productId) {
     }
 }
 
+async function handleBuyNow(productId) {
+    try {
+        const data = await addToCart(productId);
+        updateCartCount(data.cart.count);
+        // Redirect the user to the cart page immediately
+        window.location.href = 'cart.php'; 
+    } catch (error) {
+        showMessage('Failed to process Buy Now: ' + error.message);
+    }
+}
+
 async function loadCart() {
     try {
         const data = await getCart();
@@ -154,12 +166,12 @@ function renderCart(cart) {
     const subtotalEl = document.getElementById('subtotal');
     const totalEl = document.getElementById('total');
     
-    if (!tbody) return; // Not on cart page
+    if (!tbody) return; 
     
     tbody.innerHTML = '';
     
     if (!cart.items || cart.items.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">Your cart is empty</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">Your cart is empty</td></tr>';
         if (subtotalEl) subtotalEl.textContent = '$0.00';
         if (totalEl) totalEl.textContent = '$0.00';
         return;
@@ -168,6 +180,7 @@ function renderCart(cart) {
     cart.items.forEach(item => {
         const row = document.createElement('tr');
         row.innerHTML = `
+            <td><input type="checkbox" class="item-select-checkbox" data-id="${item.product_id}" checked onchange="updateCartTotals()"></td>
             <td>
                 <div class="cart-item-info">
                     <img src="${item.image_path || '../assets/placeholder.png'}" class="cart-item-img" alt="${item.name}">
@@ -178,16 +191,42 @@ function renderCart(cart) {
                 </div>
             </td>
             <td><input type="number" class="qty-input" value="${item.quantity}" min="1" onchange="updateQuantity(${item.product_id}, this.value)"></td>
-            <td>$${item.price.toFixed(2)}</td>
+            <td class="item-price" data-price="${item.price}">$${item.price.toFixed(2)}</td>
             <td>$${(item.price * item.quantity).toFixed(2)}</td>
             <td><button class="remove-btn" onclick="removeItem(${item.product_id})">Remove</button></td>
         `;
         tbody.appendChild(row);
     });
     
-    if (subtotalEl) subtotalEl.textContent = `$${cart.total.toFixed(2)}`;
-    if (totalEl) totalEl.textContent = `$${cart.total.toFixed(2)}`;
+    updateCartTotals();
 }
+
+window.updateCartTotals = function() {
+    const checkboxes = document.querySelectorAll('.item-select-checkbox');
+    let subtotal = 0;
+    
+    checkboxes.forEach(cb => {
+        if (cb.checked) {
+            const row = cb.closest('tr');
+            const qty = parseInt(row.querySelector('.qty-input').value);
+            const price = parseFloat(row.querySelector('.item-price').dataset.price);
+            subtotal += (qty * price);
+        }
+    });
+    
+    const subtotalEl = document.getElementById('subtotal');
+    const totalEl = document.getElementById('total');
+    if (subtotalEl) subtotalEl.textContent = '$' + subtotal.toFixed(2);
+    if (totalEl) totalEl.textContent = '$' + subtotal.toFixed(2);
+};
+
+window.toggleAllCartItems = function(source) {
+    const checkboxes = document.querySelectorAll('.item-select-checkbox');
+    checkboxes.forEach(cb => {
+        cb.checked = source.checked;
+    });
+    updateCartTotals();
+};
 
 async function updateQuantity(productId, quantity) {
     try {
@@ -257,6 +296,16 @@ function renderProducts(products) {
 async function loadCheckoutSummary() {
     try {
         const data = await getCart();
+        const selectedIdsStr = localStorage.getItem('selectedCheckoutItems');
+        
+        if (selectedIdsStr) {
+            const selectedIds = JSON.parse(selectedIdsStr);
+            // Filter cart items to match the user's selection
+            data.cart.items = data.cart.items.filter(item => selectedIds.includes(item.product_id));
+            // Recalculate cart total purely for the selected items
+            data.cart.total = data.cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        }
+        
         renderCheckoutSummary(data.cart);
     } catch (error) {
         showMessage('Failed to load checkout summary: ' + error.message);
@@ -290,10 +339,41 @@ function renderCheckoutSummary(cart) {
     if (totalEl) totalEl.textContent = `$${cart.total.toFixed(2)}`;
 }
 
+// Fires when clicking "Proceed to Checkout" in cart
 async function handleCheckout() {
+    const checkboxes = document.querySelectorAll('.item-select-checkbox:checked');
+    const isCartPage = document.getElementById('cartItems') !== null;
+
+    if (isCartPage) {
+        const selectedIds = Array.from(checkboxes).map(cb => parseInt(cb.dataset.id));
+        
+        if (selectedIds.length === 0) {
+            showMessage('Please select at least one item to checkout.');
+            return;
+        }
+        
+        // Save selected items locally to fetch on the checkout screen
+        localStorage.setItem('selectedCheckoutItems', JSON.stringify(selectedIds));
+        window.location.href = 'checkout.php';
+    } else {
+        window.location.href = 'checkout.php';
+    }
+}
+
+// Fires when hitting "Place Order" on the checkout form
+async function handleCheckoutSubmit(event) {
+    event.preventDefault();
+    
+    const selectedIdsStr = localStorage.getItem('selectedCheckoutItems');
+    let selectedIds = [];
+    if (selectedIdsStr) {
+        selectedIds = JSON.parse(selectedIdsStr);
+    }
+    
     try {
-        const data = await checkout();
+        const data = await checkout(selectedIds);
         showMessage('Order placed successfully!');
+        localStorage.removeItem('selectedCheckoutItems'); // Clear memory
         window.location.href = `order_confirmation.php?order_id=${data.order_id}`;
     } catch (error) {
         showMessage('Checkout failed: ' + error.message);
@@ -769,31 +849,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', handleCheckoutSubmit);
     }
-});
-
-async function handleAddToCart(productId) {
-    try {
-        const data = await addToCart(productId);
-        updateCartCount(data.cart.count);
-        showMessage('Product added to cart!');
-    } catch (error) {
-        showMessage('Failed to add to cart: ' + error.message);
-    }
-}
-
-// Add this new function:
-async function handleBuyNow(productId) {
-    try {
-        const data = await addToCart(productId);
-        updateCartCount(data.cart.count);
-        // Redirect the user to the cart page immediately
-        window.location.href = 'cart.php'; 
-    } catch (error) {
-        showMessage('Failed to process Buy Now: ' + error.message);
-    }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
+    
     // Check the URL for the 'category' parameter
     const urlParams = new URLSearchParams(window.location.search);
     const categoryParam = urlParams.get('category');

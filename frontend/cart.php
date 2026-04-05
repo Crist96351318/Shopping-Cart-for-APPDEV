@@ -82,11 +82,15 @@
     <table class="cart-table">
         <thead>
             <tr>
-                <th>Product</th>
+                <th style="width: 40px;"></th> <th>Product</th>
                 <th>Quantity</th>
                 <th>Price</th>
                 <th>Total</th>
-                <th></th>
+                <th style="text-align: right;">
+                    <label for="selectAllItems" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 11px; text-transform: uppercase; color: var(--brown);">
+                        Select All <input type="checkbox" id="selectAllItems" checked onchange="toggleAllCartItems(this)">
+                    </label>
+                </th>
             </tr>
         </thead>
         <tbody id="cartItems">

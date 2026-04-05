@@ -11,14 +11,38 @@ requireLogin();
 $user = getLoggedInUser($conn);
 $cartData = getCart($conn, $user['customer_id']);
 
+$payload = json_decode(file_get_contents('php://input'), true);
+$selectedIds = $payload['selected_product_ids'] ?? [];
+
 if (empty($cartData['items'])) {
     handleError('Cart is empty', 400);
+}
+
+// Filter the cart to only include selected items
+$itemsToCheckout = [];
+if (!empty($selectedIds)) {
+    foreach ($cartData['items'] as $item) {
+        if (in_array($item['product_id'], $selectedIds)) {
+            $itemsToCheckout[] = $item;
+        }
+    }
+    if (empty($itemsToCheckout)) {
+        handleError('Selected items are not in the cart', 400);
+    }
+} else {
+    // Fallback if no specific items were sent
+    $itemsToCheckout = $cartData['items'];
+}
+
+// Calculate the new total for only the selected items
+$total = 0;
+foreach ($itemsToCheckout as $item) {
+    $total += ($item['price'] * $item['quantity']);
 }
 
 $conn->begin_transaction();
 
 try {
-    $total = $cartData['total'];
     $stmt = $conn->prepare('INSERT INTO orders (customer_id, total_amount, status) VALUES (?, ?, ?)');
     $status = 'Pending';
     $stmt->bind_param('ids', $user['customer_id'], $total, $status);
@@ -31,7 +55,7 @@ try {
     $stmtCheckStock = $conn->prepare('SELECT stock_quantity FROM products WHERE product_id = ? FOR UPDATE');
     $stmtUpdateStock = $conn->prepare('UPDATE products SET stock_quantity = stock_quantity - ? WHERE product_id = ?');
 
-    foreach ($cartData['items'] as $item) {
+    foreach ($itemsToCheckout as $item) {
         $pid = $item['product_id'];
         $qty = $item['quantity'];
         $price = $item['price'];
@@ -63,8 +87,22 @@ try {
         }
     }
 
+    // Remove ONLY checked out items from the cart
+    $stmtDeleteCart = $conn->prepare('DELETE FROM cart WHERE customer_id = ? AND product_id = ?');
+    foreach ($itemsToCheckout as $item) {
+        $pid = $item['product_id'];
+        $stmtDeleteCart->bind_param('ii', $user['customer_id'], $pid);
+        $stmtDeleteCart->execute();
+    }
+
     $conn->commit();
-    clearCart($conn, $user['customer_id']);
+    
+    // Optional: Send Notification (if file exists)
+    if (file_exists('notification_helper.php')) {
+        require_once('notification_helper.php');
+        createNotification($conn, $user['customer_id'], "Order Received", "Thank you for your order! Order #" . $orderId, $orderId);
+    }
+
     jsonResponse(['success' => true, 'message' => 'Order placed', 'order_id' => $orderId]);
 } catch (Exception $e) {
     $conn->rollback();
