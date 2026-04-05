@@ -792,3 +792,27 @@ async function handleBuyNow(productId) {
         showMessage('Failed to process Buy Now: ' + error.message);
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Check the URL for the 'category' parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get('category');
+
+    if (categoryParam) {
+        // Replace 'categoryDropdown' with the actual ID of your <select> element in fragrances.php
+        const dropdown = document.getElementById('categoryDropdown'); 
+        
+        if (dropdown) {
+            // Loop through options to find the matching category
+            for (let i = 0; i < dropdown.options.length; i++) {
+                if (dropdown.options[i].text === categoryParam || dropdown.options[i].value === categoryParam) {
+                    dropdown.selectedIndex = i;
+                    
+                    // Manually trigger the 'change' event so your products actually filter
+                    dropdown.dispatchEvent(new Event('change'));
+                    break;
+                }
+            }
+        }
+    }
+});

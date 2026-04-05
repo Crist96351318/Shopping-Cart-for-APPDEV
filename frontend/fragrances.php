@@ -162,7 +162,6 @@
     .error { color: #cc6666; }
     .no-products { color: var(--brown); }
 </style>
-
 <script>
 function toggleCategory(id, categoryName) {
     const content = document.getElementById(id);
@@ -215,15 +214,15 @@ function renderCategoryProducts(container, products) {
 
     const html = products.map(product => `
         <div class="product-card">
-            <div class="product-img-wrap">
-                <img src="${product.image_path || '../assets/placeholder.png'}" class="product-img" alt="${product.name}">
+            <div class="product-img-wrap" style="height: 250px; display: flex; justify-content: center; align-items: center; overflow: hidden; background: #f9f9f9;">
+                <img src="${product.image_path || '../assets/placeholder.png'}" class="product-img" alt="${product.name}" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;">
                 <div class="product-actions">
                     <button class="add-cart" style="width: 100%;" onclick="handleBuyNow(${product.product_id})">Buy Now</button>
                     <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(${product.product_id})">Add to Cart</button>
                 </div>
             </div>
             <div class="product-name">${product.name}</div>
-            <div class="product-price">$${product.price.toFixed(2)}</div>
+            <div class="product-price">$${parseFloat(product.price).toFixed(2)}</div>
         </div>
     `).join('');
 
@@ -249,6 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             window.fragranceProducts = data.products || [];
 
+            // Render all categories immediately
             Object.entries(categories).forEach(([id, name]) => {
                 const content = document.getElementById(id);
                 if (content) {
@@ -258,6 +258,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     content.dataset.loaded = 'true';
                 }
             });
+
+            // Handle the URL parameter to auto-dropdown the category
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryParam = urlParams.get('category');
+
+            if (categoryParam) {
+                const targetId = Object.keys(categories).find(key => 
+                    categories[key].toLowerCase() === categoryParam.toLowerCase()
+                );
+
+                if (targetId) {
+                    const targetContent = document.getElementById(targetId);
+                    const targetTrigger = targetContent.previousElementSibling;
+                    
+                    targetContent.classList.add('show');
+                    targetTrigger.classList.add('active');
+
+                    // Scroll to it so it is perfectly visible
+                    setTimeout(() => {
+                        targetTrigger.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            }
         })
         .catch(error => {
             console.error('Error preloading products:', error);
@@ -268,6 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 });
 </script>
+
 
 <footer>
   <div class="footer-bottom">

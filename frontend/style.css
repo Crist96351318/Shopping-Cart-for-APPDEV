@@ -583,3 +583,24 @@
   border-top: 1px solid var(--sand);
   margin: 8px 0;
 }
+
+
+/* Ensure consistent height for all product image containers on both index.php and fragrances.php */
+.product-card .img-container {
+    width: 100%; /* Fill the card width */
+    height: 200px; /* Example fixed height for all image containers; adjust as needed for your design */
+    overflow: hidden; /* Prevent visual overflow if object-fit: cover is used or constraints are violated */
+    display: flex; /* Helper to center images within the container */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Style the image tag within the container */
+.product-card img {
+    max-width: 100%; /* Don't scale image larger than container width */
+    max-height: 100%; /* Don't scale image taller than container height */
+    object-fit: contain; /* Scale image down to fit, maintaining aspect ratio and adding whitespace (padding) if aspect ratio differs */
+    /* OR */
+    /* object-fit: cover; */ /* Scale image to fill the space, maintaining aspect ratio but potentially cropping if aspect ratio differs */
+    display: block; /* Ensure correct block-level rendering */
+}

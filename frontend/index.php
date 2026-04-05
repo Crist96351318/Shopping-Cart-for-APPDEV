@@ -80,9 +80,9 @@
       <span class="section-tag">Explore</span>
       <h2 class="section-title">Perfume <em>Categories</em></h2>
     </div>
-    <div class="cat-grid">
+  <div class="cat-grid">
 
-  <div class="cat-card">
+  <div class="cat-card" style="cursor: pointer;" onclick="window.location.href='fragrances.php?category=Extrait de Parfum'">
     <div class="cat-img">
       <img src="../assets/cat1.png" alt="Extrait de Parfum Collection">
     </div>
@@ -92,7 +92,7 @@
     </div>
   </div>
 
-  <div class="cat-card">
+  <div class="cat-card" style="cursor: pointer;" onclick="window.location.href='fragrances.php?category=Eau de Parfum'">
     <div class="cat-img">
       <img src="../assets/cat2.png" alt="Eau de Parfum Collection">
     </div>
@@ -102,7 +102,7 @@
     </div>
   </div>
 
-  <div class="cat-card">
+  <div class="cat-card" style="cursor: pointer;" onclick="window.location.href='fragrances.php?category=Eau de Toilette'">
     <div class="cat-img">
       <img src="../assets/cat3.png" alt="Eau de Toilette Collection">
     </div>
@@ -112,7 +112,7 @@
     </div>
   </div>
 
-  <div class="cat-card">
+  <div class="cat-card" style="cursor: pointer;" onclick="window.location.href='fragrances.php?category=Eau de Cologne'">
     <div class="cat-img">
       <img src="../assets/cat4.png" alt="Eau de Cologne Collection">
     </div>
@@ -122,7 +122,7 @@
     </div>
   </div>
 
-  <div class="cat-card">
+  <div class="cat-card" style="cursor: pointer;" onclick="window.location.href='fragrances.php?category=Eau Fraiche'">
     <div class="cat-img">
       <img src="../assets/cat5.png" alt="Eau Fraiche Collection">
     </div>
@@ -133,7 +133,7 @@
   </div>
 
 </div>
-  </div>
+</div>
 </section>
 
 <section class="featured">
@@ -142,57 +142,8 @@
       <span class="section-tag">Bestsellers</span>
       <h2 class="section-title">Most <em>Loved</em></h2>
     </div>
-    <div class="product-grid">
-      <div class="product-card">
-        <div class="product-img-wrap">
-          <div class="product-img prod-bg-1"></div>
-          <span class="badge-new">New</span>
-          <div class="product-actions">
-            <button class="add-cart" onclick="handleAddToCart(1)">Buy Now</button>
-            <button class="add-cart" onclick="handleAddToCart(1)">Add to Cart</button>
-          </div>
-        </div>
-        <div class="product-tag">Serum</div>
-        <div class="product-name">Glow Essence Serum</div>
-        <div class="product-price">$68.00</div>
-      </div>
-      <div class="product-card">
-        <div class="product-img-wrap">
-          <div class="product-img prod-bg-2"></div>
-          <span class="badge-sale">Sale</span>
-          <div class="product-actions">
-            <button class="add-cart" onclick="handleAddToCart(2)">Buy Now</button>
-            <button class="add-cart" onclick="handleAddToCart(2)">Add to Cart</button>
-          </div>
-        </div>
-        <div class="product-tag">Moisturiser</div>
-        <div class="product-name">Velvet Cloud Cream</div>
-        <div class="product-price"><s>$58.00</s>$44.00</div>
-      </div>
-      <div class="product-card">
-        <div class="product-img-wrap">
-          <div class="product-img prod-bg-3"></div>
-          <div class="product-actions">
-            <button class="add-cart" onclick="handleAddToCart(3)">Buy Now</button>
-            <button class="add-cart" onclick="handleAddToCart(3)">Add to Cart</button>
-          </div>
-        </div>
-        <div class="product-tag">Facial Oil</div>
-        <div class="product-name">Rosehip Gold Oil</div>
-        <div class="product-price">$82.00</div>
-      </div>
-      <div class="product-card">
-        <div class="product-img-wrap">
-          <div class="product-img prod-bg-4"></div>
-          <div class="product-actions">
-            <button class="add-cart" onclick="handleAddToCart(4)">Buy Now</button>
-            <button class="add-cart" onclick="handleAddToCart(4)">Add to Cart</button>
-          </div>
-        </div>
-        <div class="product-tag">Eye Care</div>
-        <div class="product-name">Luminous Eye Elixir</div>
-        <div class="product-price">$54.00</div>
-      </div>
+    <div class="product-grid" id="featuredProductsGrid">
+      <p style="grid-column: span 4; text-align: center;">Loading bestsellers...</p>
     </div>
   </div>
 </section>
@@ -302,6 +253,50 @@
     <polyline points="5 12 12 5 19 12"></polyline>
   </svg>
 </button>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const response = await fetch('../backend/get_products.php');
+        const data = await response.json();
+        
+        if (data.success && data.products) {
+            const grid = document.getElementById('featuredProductsGrid');
+            
+            // Take the first 4 products to feature as bestsellers
+            const featuredProducts = data.products.slice(0, 4);
+            
+            grid.innerHTML = featuredProducts.map((product, index) => {
+                let badge = '';
+                if (index === 0) badge = '<span class="badge-new">New</span>';
+                if (index === 1) badge = '<span class="badge-sale">Sale</span>';
+                
+                // Adjust path depending on what get_products.php returns
+                const imgSrc = product.image_path ? `../${product.image_path}` : '../assets/placeholder.png';
+                
+                return `
+                <div class="product-card">
+                  <div class="product-img-wrap" style="height: 250px; display: flex; justify-content: center; align-items: center; overflow: hidden; background: #f9f9f9;">
+                    <img src="${imgSrc}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;">
+                    ${badge}
+                    <div class="product-actions">
+                     <button class="add-cart" style="width: 100%;" onclick="handleBuyNow(${product.product_id})">Buy Now</button>
+                      <button class="add-cart" onclick="handleAddToCart(${product.product_id})" style="width: 100%;">Add to Cart</button>
+                    </div>
+                  </div>
+                  <div class="product-tag">${product.category_name || 'Fragrance'}</div>
+                  <div class="product-name">${product.name}</div>
+                  <div class="product-price">$${parseFloat(product.price).toFixed(2)}</div>
+                </div>
+                `;
+            }).join('');
+        }
+    } catch (error) {
+        console.error("Failed to load featured products:", error);
+    }
+});
+
+</script>
 
 <script src="script.js"></script>
 </body>
