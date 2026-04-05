@@ -151,40 +151,31 @@
 <section class="testimonials">
   <div class="container">
     <div class="section-header">
-      <span class="section-tag">Reviews</span>
+      <span class="section-tag">Quotes</span>
       <h2 class="section-title">What They're <em>Saying</em></h2>
     </div>
     <div class="testi-grid">
       <div class="testi-card">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">"My skin has never looked this luminous. The Glow Serum is the one product I'd take to a desert island without question."</p>
+        <p class="testi-text">"A woman's perfume tells more about her than her handwriting."</p>
         <div class="testi-author">
-          <div class="testi-avatar">S</div>
           <div>
-            <div class="testi-name">Sophia M.</div>
-            <div class="testi-handle">Verified Customer</div>
+            <div class="testi-name"> — Christian Dior</div>
           </div>
         </div>
       </div>
       <div class="testi-card">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">"I tried everything for my dry skin. The Velvet Cloud Cream solved it in two weeks. I'm completely obsessed and have told everyone."</p>
+        <p class="testi-text">"Perfume is the art that makes memory speak."</p>
         <div class="testi-author">
-          <div class="testi-avatar">A</div>
           <div>
-            <div class="testi-name">Amara K.</div>
-            <div class="testi-handle">Verified Customer</div>
+            <div class="testi-name"> — Francis Kurkdjian</div>
           </div>
         </div>
       </div>
       <div class="testi-card">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">"Sustainable, effective, beautifully packaged. Lumière is everything I want a clean beauty brand to be. Repeat customer forever."</p>
+        <p class="testi-text">"No elegance is possible without perfume. It is the unseen, unforgettable, ultimate accessory."</p>
         <div class="testi-author">
-          <div class="testi-avatar">C</div>
           <div>
-            <div class="testi-name">Clara B.</div>
-            <div class="testi-handle">Verified Customer</div>
+            <div class="testi-name"> — Coco Chanel</div>
           </div>
         </div>
       </div>
@@ -192,58 +183,10 @@
   </div>
 </section>
 
+
 <footer>
-  <div class="footer-grid">
-    <div>
-      <div class="footer-logo">Le Parfum</div>
-      <p class="footer-desc">Clean, botanical skincare rooted in nature and crafted for your most radiant self. Cruelty-free, sustainably sourced.</p>
-      <div class="footer-social">
-        <a class="social-link" href="#">ig</a>
-        <a class="social-link" href="#">fb</a>
-        <a class="social-link" href="#">tk</a>
-        <a class="social-link" href="#">pi</a>
-      </div>
-    </div>
-    <div>
-      <div class="footer-heading">Shop</div>
-      <div class="footer-links">
-        <a href="#">New Arrivals</a>
-        <a href="#">Bestsellers</a>
-        <a href="#">Skincare</a>
-        <a href="#">Body Care</a>
-        <a href="#">Gift Sets</a>
-      </div>
-    </div>
-    <div>
-      <div class="footer-heading">Help</div>
-      <div class="footer-links">
-        <a href="#">FAQ</a>
-        <a href="#">Shipping & Returns</a>
-        <a href="#">Track Your Order</a>
-        <a href="#">Contact Us</a>
-      </div>
-    </div>
-    <div>
-      <div class="footer-heading">Company</div>
-      <div class="footer-links">
-        <a href="#">Our Story</a>
-        <a href="#">Ingredients</a>
-        <a href="#">Sustainability</a>
-        <a href="#">Journal</a>
-        <a href="#">Press</a>
-      </div>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>© 2026 Le Parfum. All rights reserved.</p>
-    <div class="payment-icons">
-      <span class="pay-icon">Visa</span>
-      <span class="pay-icon">MC</span>
-      <span class="pay-icon">Amex</span>
-      <span class="pay-icon">PayPal</span>
-      <span class="pay-icon">Shop Pay</span>
-    </div>
-  </div>
+  <div class="footer-bottom" style="justify-content: center;">
+    <p style="text-align: center; color: black; font-size: 14px; width: 100%;">© 2026 Le Parfum. All rights reserved.</p>
 </footer>
 
 
