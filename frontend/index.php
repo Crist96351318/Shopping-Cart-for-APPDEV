@@ -195,7 +195,7 @@
 <footer>
   <div class="footer-grid">
     <div>
-      <div class="footer-logo">Lumière</div>
+      <div class="footer-logo">Le Parfum</div>
       <p class="footer-desc">Clean, botanical skincare rooted in nature and crafted for your most radiant self. Cruelty-free, sustainably sourced.</p>
       <div class="footer-social">
         <a class="social-link" href="#">ig</a>
@@ -235,7 +235,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 Lumière Skincare. All rights reserved.</p>
+    <p>© 2026 Le Parfum. All rights reserved.</p>
     <div class="payment-icons">
       <span class="pay-icon">Visa</span>
       <span class="pay-icon">MC</span>
