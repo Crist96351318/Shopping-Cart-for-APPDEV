@@ -116,9 +116,17 @@ async function getProducts() {
     return await apiRequest('get_products.php');
 }
 
-async function checkout() {
+async function checkout(selectedIds = []) {
     return await apiRequest('checkout.php', {
-        method: 'POST'
+        method: 'POST',
+        body: JSON.stringify({ selected_product_ids: selectedIds })
+    });
+}
+
+async function updateProfile(profileData) {
+    return await apiRequest('update_profile.php', {
+        method: 'POST',
+        body: JSON.stringify(profileData)
     });
 }
 
@@ -294,6 +302,74 @@ async function handleCheckout() {
     try {
         const data = await checkout();
         showMessage('Order placed successfully!');
+        window.location.href = `order_confirmation.php?order_id=${data.order_id}`;
+    } catch (error) {
+        showMessage('Checkout failed: ' + error.message);
+    }
+}
+
+async function loadProfilePage() {
+    const profileForm = document.getElementById('profileForm');
+    if (!profileForm) return;
+
+    try {
+        const data = await getUser();
+        const user = data.user || {};
+
+        profileForm.first_name.value = user.first_name || '';
+        profileForm.last_name.value = user.last_name || '';
+        profileForm.email.value = user.email || '';
+        profileForm.address.value = user.address || '';
+        profileForm.city.value = user.city || '';
+        profileForm.postal_code.value = user.postal_code || '';
+        profileForm.card_number.value = user.card_last4 ? `**** **** **** ${user.card_last4}` : '';
+        profileForm.expiry.value = user.card_expiry || '';
+    } catch (error) {
+        showMessage('Failed to load profile: ' + error.message);
+    }
+}
+
+async function handleProfileSave(event) {
+    event.preventDefault();
+    const form = event.target;
+    const cardNumberRaw = form.card_number.value || '';
+    const cardDigits = cardNumberRaw.replace(/\D/g, '');
+    const profileData = {
+        first_name: form.first_name.value,
+        last_name: form.last_name.value,
+        address: form.address.value,
+        city: form.city.value,
+        postal_code: form.postal_code.value,
+        card_number: cardDigits,
+        expiry: form.expiry.value
+    };
+
+    try {
+        const data = await updateProfile(profileData);
+        if (data && data.user) {
+            setLocalUser(data.user);
+            // Reload the form with updated data
+            await loadProfilePage();
+        }
+        showMessage('Profile updated successfully!');
+    } catch (error) {
+        showMessage('Profile update failed: ' + error.message);
+    }
+}
+
+async function handleCheckoutSubmit(event) {
+    event.preventDefault();
+    
+    const selectedIdsStr = localStorage.getItem('selectedCheckoutItems');
+    let selectedIds = [];
+    if (selectedIdsStr) {
+        selectedIds = JSON.parse(selectedIdsStr);
+    }
+    
+    try {
+        const data = await checkout(selectedIds);
+        showMessage('Order placed successfully!');
+        localStorage.removeItem('selectedCheckoutItems');
         window.location.href = `order_confirmation.php?order_id=${data.order_id}`;
     } catch (error) {
         showMessage('Checkout failed: ' + error.message);
@@ -510,16 +586,12 @@ function updateAccountDropdown(user) {
             const existingItems = dropdownLinks.querySelectorAll('.dynamic-item');
             existingItems.forEach(item => item.remove());
 
-            // Add Edit Profile
-            const editProfile = document.createElement('a');
-            editProfile.href = '#';
-            editProfile.className = 'dropdown-item dynamic-item';
-            editProfile.textContent = 'Edit Profile';
-            editProfile.onclick = (e) => {
-                e.preventDefault();
-                showMessage('Edit Profile feature coming soon!');
-            };
-            dropdownLinks.insertBefore(editProfile, divider);
+            // Add Profile
+            const profileLink = document.createElement('a');
+            profileLink.href = 'profile.php';
+            profileLink.className = 'dropdown-item dynamic-item';
+            profileLink.textContent = 'Profile';
+            dropdownLinks.insertBefore(profileLink, divider);
 
             // Add Order History
             const orderHistory = document.createElement('a');
@@ -784,6 +856,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const checkoutForm = document.getElementById('checkoutForm');
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', handleCheckoutSubmit);
+    }
+
+    const profileForm = document.getElementById('profileForm');
+    if (profileForm) {
+        loadProfilePage();
+        profileForm.addEventListener('submit', handleProfileSave);
     }
 });
 
