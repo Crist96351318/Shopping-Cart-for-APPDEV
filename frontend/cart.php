@@ -14,6 +14,8 @@
         .cart-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
         .cart-table th { text-align: left; padding: 20px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--brown); border-bottom: 1px solid var(--sand); }
         .cart-table td { padding: 24px 20px; border-bottom: 1px solid var(--sand); vertical-align: middle; }
+        .cart-table td:last-child { text-align: center; }
+        .cart-table td:last-child .remove-btn { display: inline-flex; justify-content: center; }
         .cart-item-info { display: flex; align-items: center; gap: 20px; }
         .cart-item-img { width: 80px; height: 100px; background: var(--cream); object-fit: contain; }
         .cart-item-name { font-family: var(--serif); font-size: 18px; color: var(--dark); display: block; }

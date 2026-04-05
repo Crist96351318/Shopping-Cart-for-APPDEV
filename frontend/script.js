@@ -167,15 +167,20 @@ function renderCart(cart) {
     tbody.innerHTML = '';
     
     if (!cart.items || cart.items.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">Your cart is empty</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">Your cart is empty</td></tr>';
         if (subtotalEl) subtotalEl.textContent = '$0.00';
         if (totalEl) totalEl.textContent = '$0.00';
         return;
     }
     
+    const selectedIds = getSelectedCheckoutIds();
     cart.items.forEach(item => {
         const row = document.createElement('tr');
+        const isChecked = selectedIds.includes(String(item.product_id));
         row.innerHTML = `
+            <td>
+                <input type="checkbox" class="cart-item-select" data-product-id="${item.product_id}" ${isChecked ? 'checked' : ''} />
+            </td>
             <td>
                 <div class="cart-item-info">
                     <img src="${item.image_path || '../assets/placeholder.png'}" class="cart-item-img" alt="${item.name}">
@@ -195,6 +200,55 @@ function renderCart(cart) {
     
     if (subtotalEl) subtotalEl.textContent = `$${cart.total.toFixed(2)}`;
     if (totalEl) totalEl.textContent = `$${cart.total.toFixed(2)}`;
+
+    attachCartCheckboxListeners();
+}
+
+function getSelectedCheckoutIds() {
+    const stored = localStorage.getItem('selectedCheckoutItems');
+    return stored ? JSON.parse(stored) : [];
+}
+
+function setSelectedCheckoutIds(ids) {
+    localStorage.setItem('selectedCheckoutItems', JSON.stringify(ids));
+}
+
+function attachCartCheckboxListeners() {
+    const checkboxes = document.querySelectorAll('.cart-item-select');
+    const masterCheckbox = document.getElementById('selectAllItems');
+    const selectedIds = getSelectedCheckoutIds();
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            const productId = checkbox.dataset.productId;
+            let selected = getSelectedCheckoutIds();
+            if (checkbox.checked) {
+                if (!selected.includes(productId)) selected.push(productId);
+            } else {
+                selected = selected.filter(id => id !== productId);
+            }
+            setSelectedCheckoutIds(selected);
+            if (masterCheckbox) {
+                masterCheckbox.checked = selected.length === checkboxes.length;
+            }
+        });
+    });
+
+    if (masterCheckbox) {
+        masterCheckbox.checked = checkboxes.length > 0 && selectedIds.length === checkboxes.length;
+    }
+}
+
+function toggleAllCartItems(masterCheckbox) {
+    const checkboxes = document.querySelectorAll('.cart-item-select');
+    const selectedIds = [];
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = masterCheckbox.checked;
+        if (masterCheckbox.checked) {
+            selectedIds.push(checkbox.dataset.productId);
+        }
+    });
+    setSelectedCheckoutIds(selectedIds);
 }
 
 async function updateQuantity(productId, quantity) {
