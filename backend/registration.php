@@ -43,7 +43,7 @@ $stmt->bind_param('sssss', $first_name, $last_name, $email, $hashedPassword, $ad
 if ($stmt->execute()) {
     $userId = $conn->insert_id;
     $_SESSION['user_id'] = $userId;
-    jsonResponse(['success' => true, 'message' => 'Registration successful', 'user' => ['customer_id' => $userId, 'first_name' => $first_name, 'last_name' => $last_name, 'email' => $email, 'address' => $address]]);
+    jsonResponse(['success' => true, 'message' => 'Registration successful', 'user' => ['customer_id' => $userId, 'first_name' => $first_name, 'last_name' => $last_name, 'email' => $email, 'address' => $address, 'city' => '', 'postal_code' => '', 'card_last4' => '', 'card_expiry' => '', 'is_admin' => 0]]);
 } else {
     $err = $stmt->error ?: $conn->error;
     handleError('Registration failed: ' . $err, 500);

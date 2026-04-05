@@ -30,12 +30,25 @@ if ($colResult && $colResult->num_rows > 0) {
     $hasAdminColumn = true;
 }
 
-$user = null;
-if ($hasAdminColumn) {
-    $stmt = $conn->prepare('SELECT customer_id, first_name, last_name, email, password, address, is_admin FROM users WHERE email = ? LIMIT 1');
-} else {
-    $stmt = $conn->prepare('SELECT customer_id, first_name, last_name, email, password, address FROM users WHERE email = ? LIMIT 1');
+$selectFields = [
+    'customer_id',
+    'first_name',
+    'last_name',
+    'email',
+    'password',
+    'address'
+];
+foreach (['city', 'postal_code', 'card_last4', 'card_expiry'] as $optionalColumn) {
+    if (columnExists($conn, 'users', $optionalColumn)) {
+        $selectFields[] = $optionalColumn;
+    } else {
+        $selectFields[] = "'' AS {$optionalColumn}";
+    }
 }
+$selectFields[] = $hasAdminColumn ? 'is_admin' : '0 AS is_admin';
+
+$user = null;
+$stmt = $conn->prepare('SELECT ' . implode(', ', $selectFields) . ' FROM users WHERE email = ? LIMIT 1');
 $stmt->bind_param('s', $email);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -43,7 +56,7 @@ $user = $result->fetch_assoc();
 
 // If not found in users, check admin_users
 if (!$user) {
-    $stmt = $conn->prepare('SELECT admin_id AS customer_id, username AS first_name, "" AS last_name, email, password, "" AS address, 1 AS is_admin FROM admin_users WHERE email = ? LIMIT 1');
+    $stmt = $conn->prepare('SELECT admin_id AS customer_id, username AS first_name, "" AS last_name, email, password, "" AS address, "" AS city, "" AS postal_code, "" AS card_last4, "" AS card_expiry, 1 AS is_admin FROM admin_users WHERE email = ? LIMIT 1');
     $stmt->bind_param('s', $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -84,6 +97,10 @@ if ($user && password_verify($password, $user['password'])) {
             'last_name' => '',
             'email' => $defaultAdminEmail,
             'address' => '',
+            'city' => '',
+            'postal_code' => '',
+            'card_last4' => '',
+            'card_expiry' => '',
             'is_admin' => 1
         ];
     }
