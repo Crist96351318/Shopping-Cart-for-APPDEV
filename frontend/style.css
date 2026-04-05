@@ -403,7 +403,7 @@
   footer {
     background: var(--cream);
     border-top: 1px solid var(--sand);
-    padding: 72px 0 40px;
+    padding: 0px 0 10px;
   }
   .footer-grid {
     max-width: 1440px; margin: auto; padding: 0 48px;

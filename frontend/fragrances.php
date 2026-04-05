@@ -287,9 +287,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <footer>
-  <div class="footer-bottom">
-    <p>© 2026 Le Parfum. All rights reserved.</p>
-  </div>
+  <div class="footer-bottom" style="justify-content: center;">
+    <p style="text-align: center; color: black; font-size: 14px; width: 100%;">© 2026 Le Parfum. All rights reserved.</p>
 </footer>
 
 <button id="scrollToTopBtn" class="scroll-to-top" title="Go to top">

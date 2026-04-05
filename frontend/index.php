@@ -154,6 +154,25 @@
       <span class="section-tag">Quotes</span>
       <h2 class="section-title">What They're <em>Saying</em></h2>
     </div>
+
+    <style>
+      .testi-grid {
+        display: flex !important;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 32px;
+      }
+      .testi-card {
+        flex: 0 1 calc(33.333% - 22px);
+        box-sizing: border-box;
+      }
+      @media (max-width: 768px) {
+        .testi-card {
+          flex: 0 1 100%;
+        }
+      }
+    </style>
+  
     <div class="testi-grid">
       <div class="testi-card">
         <p class="testi-text">"A woman's perfume tells more about her than her handwriting."</p>
@@ -176,6 +195,22 @@
         <div class="testi-author">
           <div>
             <div class="testi-name"> — Coco Chanel</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-text">"Fragrance is the first layer of dressing, an invisible personal style."</p>
+        <div class="testi-author">
+          <div>
+            <div class="testi-name"> — Carolina Herrera</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-text">“Love is a perfume you cannot pour onto others without getting a few drops on yourself.”</p>
+        <div class="testi-author">
+          <div>
+            <div class="testi-name"> — Ralph Waldo Emerson</div>
           </div>
         </div>
       </div>
