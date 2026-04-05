@@ -218,7 +218,7 @@ function renderCategoryProducts(container, products) {
             <div class="product-img-wrap">
                 <img src="${product.image_path || '../assets/placeholder.png'}" class="product-img" alt="${product.name}">
                 <div class="product-actions">
-                    <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(${product.product_id})">Buy Now</button>
+                    <button class="add-cart" style="width: 100%;" onclick="handleBuyNow(${product.product_id})">Buy Now</button>
                     <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(${product.product_id})">Add to Cart</button>
                 </div>
             </div>

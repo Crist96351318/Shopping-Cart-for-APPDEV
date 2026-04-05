@@ -770,3 +770,25 @@ document.addEventListener("DOMContentLoaded", () => {
         checkoutForm.addEventListener('submit', handleCheckoutSubmit);
     }
 });
+
+async function handleAddToCart(productId) {
+    try {
+        const data = await addToCart(productId);
+        updateCartCount(data.cart.count);
+        showMessage('Product added to cart!');
+    } catch (error) {
+        showMessage('Failed to add to cart: ' + error.message);
+    }
+}
+
+// Add this new function:
+async function handleBuyNow(productId) {
+    try {
+        const data = await addToCart(productId);
+        updateCartCount(data.cart.count);
+        // Redirect the user to the cart page immediately
+        window.location.href = 'cart.php'; 
+    } catch (error) {
+        showMessage('Failed to process Buy Now: ' + error.message);
+    }
+}
