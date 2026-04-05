@@ -74,53 +74,10 @@
     
     <div class="checkout-grid">
         <div class="checkout-form">
+            <div class="profile-note" style="margin-bottom: 32px; font-size: 14px; color: var(--text); line-height: 1.6;">
+                Your shipping and payment details are now saved on your <a href="profile.php">Profile</a>. Please update your profile before placing an order.
+            </div>
             <form id="checkoutForm">
-                <div class="form-section">
-                    <h3 class="form-section-title">Shipping Information</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>First Name</label>
-                            <input type="text" name="first_name" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Last Name</label>
-                            <input type="text" name="last_name" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Address</label>
-                        <input type="text" name="address" placeholder="Street address" required>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>City</label>
-                            <input type="text" name="city" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Postal Code</label>
-                            <input type="text" name="postal_code" required>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-section">
-                    <h3 class="form-section-title">Payment Information</h3>
-                    <div class="form-group">
-                        <label>Card Number</label>
-                        <input type="text" name="card_number" placeholder="1234 5678 9012 3456" required>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Expiry Date</label>
-                            <input type="text" name="expiry" placeholder="MM/YY" required>
-                        </div>
-                        <div class="form-group">
-                            <label>CVV</label>
-                            <input type="text" name="cvv" placeholder="123" required>
-                        </div>
-                    </div>
-                </div>
-                
                 <button type="submit" class="btn-primary checkout-btn">Place Order</button>
             </form>
         </div>

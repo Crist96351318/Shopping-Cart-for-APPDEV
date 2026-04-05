@@ -44,6 +44,11 @@ function getCart($conn, $customer_id) {
     return ['items' => $items, 'total' => round($total, 2), 'count' => $count];
 }
 
+function columnExists($conn, $table, $column) {
+    $result = $conn->query("SHOW COLUMNS FROM {$table} LIKE '{$column}'");
+    return $result && $result->num_rows > 0;
+}
+
 function addToCart($conn, $customer_id, $product_id, $quantity = 1) {
     $product_id = intval($product_id);
     $quantity = max(1, intval($quantity));
@@ -113,7 +118,25 @@ function getLoggedInUser($conn) {
         }
     }
 
-    $stmt = $conn->prepare('SELECT customer_id, first_name, last_name, email, address, created_at, COALESCE(is_admin, 0) AS is_admin FROM users WHERE customer_id = ? LIMIT 1');
+    $selectFields = [
+        'customer_id',
+        'first_name',
+        'last_name',
+        'email',
+        'address',
+        'created_at',
+        'COALESCE(is_admin, 0) AS is_admin'
+    ];
+
+    foreach (['city', 'postal_code', 'card_last4', 'card_expiry'] as $optionalColumn) {
+        if (columnExists($conn, 'users', $optionalColumn)) {
+            $selectFields[] = $optionalColumn;
+        } else {
+            $selectFields[] = "'' AS {$optionalColumn}";
+        }
+    }
+
+    $stmt = $conn->prepare('SELECT ' . implode(', ', $selectFields) . ' FROM users WHERE customer_id = ? LIMIT 1');
     $stmt->bind_param('i', $userId);
     $stmt->execute();
     $result = $stmt->get_result();

@@ -42,6 +42,10 @@ $sql3 = "CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(150) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     address TEXT,
+    city VARCHAR(100) DEFAULT '',
+    postal_code VARCHAR(20) DEFAULT '',
+    card_last4 VARCHAR(4) DEFAULT '',
+    card_expiry VARCHAR(10) DEFAULT '',
     is_admin TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
@@ -97,12 +101,36 @@ foreach($tables as $k => $sql) {
     }
 }
 
+// Add new profile fields to existing users table if necessary
+$requiredColumns = [
+    "city VARCHAR(100) DEFAULT ''",
+    "postal_code VARCHAR(20) DEFAULT ''",
+    "card_last4 VARCHAR(4) DEFAULT ''",
+    "card_expiry VARCHAR(10) DEFAULT ''"
+];
+
+foreach ($requiredColumns as $columnDefinition) {
+    preg_match('/^([a-z_]+)/', $columnDefinition, $matches);
+    $columnName = $matches[1] ?? '';
+    if ($columnName) {
+        $colResult = $conn->query("SHOW COLUMNS FROM users LIKE '{$columnName}'");
+        if ($colResult && $colResult->num_rows === 0) {
+            $alterSql = "ALTER TABLE users ADD COLUMN {$columnDefinition}";
+            if ($conn->query($alterSql) === TRUE) {
+                echo "Added column {$columnName} to users table.<br>";
+            } else {
+                echo "Error adding column {$columnName}: " . $conn->error . "<br>";
+            }
+        }
+    }
+}
+
 // Optional initial admin manager (do not duplicate on rerun)
 $defaultAdmin = 'admin@gmail.com';
 $defaultUser = 'admin';
 $defaultPass = 'admin123';
 $hashedPass = password_hash($defaultPass, PASSWORD_DEFAULT);
-$sqlAdminSeed = "INSERT IGNORE INTO store_admins (username, email, password) VALUES ('{$defaultUser}', '{$defaultAdmin}', '{$hashedPass}')";
+$sqlAdminSeed = "INSERT IGNORE INTO admin_users (username, email, password) VALUES ('{$defaultUser}', '{$defaultAdmin}', '{$hashedPass}')";
 if ($conn->query($sqlAdminSeed) === TRUE) {
     echo "Default admin record inserted or already exists.<br>";
 } else {

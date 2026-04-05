@@ -36,6 +36,10 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(150) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     address TEXT,
+    city VARCHAR(100) DEFAULT '',
+    postal_code VARCHAR(20) DEFAULT '',
+    card_last4 VARCHAR(4) DEFAULT '',
+    card_expiry VARCHAR(10) DEFAULT '',
     is_admin TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

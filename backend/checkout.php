@@ -9,6 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 requireLogin();
 $user = getLoggedInUser($conn);
+if (empty($user['address']) || empty($user['city']) || empty($user['postal_code']) || empty($user['card_last4']) || empty($user['card_expiry'])) {
+    handleError('Please complete your Profile with shipping and payment details before placing an order.', 400);
+}
 $cartData = getCart($conn, $user['customer_id']);
 
 $payload = json_decode(file_get_contents('php://input'), true);
