@@ -30,6 +30,37 @@ $city = trim($payload['city'] ?? '');
 $postal_code = trim($payload['postal_code'] ?? '');
 $card_number_input = trim($payload['card_number'] ?? '');
 $expiry = trim($payload['expiry'] ?? '');
+$old_password = trim($payload['old_password'] ?? '');
+$new_password = trim($payload['new_password'] ?? '');
+$confirm_password = trim($payload['confirm_password'] ?? '');
+
+// Handle password change if provided
+$password_hash = null;
+if (!empty($new_password)) {
+    if (empty($old_password)) {
+        handleError('Current password is required to change password', 400);
+    }
+    if ($new_password !== $confirm_password) {
+        handleError('New passwords do not match', 400);
+    }
+    if (strlen($new_password) < 6) {
+        handleError('Password must be at least 6 characters long', 400);
+    }
+    
+    // Verify old password
+    $stmt = $conn->prepare('SELECT password FROM users WHERE customer_id = ?');
+    $stmt->bind_param('i', $customerId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $userRecord = $result->fetch_assoc();
+    
+    if (!$userRecord || !password_verify($old_password, $userRecord['password'])) {
+        handleError('Current password is incorrect', 401);
+    }
+    
+    // Hash new password
+    $password_hash = password_hash($new_password, PASSWORD_DEFAULT);
+}
 
 // Only update card if a new card number (non-masked) is provided
 $card_last4 = $user['card_last4'] ?? '';
@@ -60,12 +91,16 @@ foreach ($requiredColumns as $columnName => $columnDef) {
     }
 }
 
-$stmt = $conn->prepare('UPDATE users SET first_name = ?, last_name = ?, address = ?, city = ?, postal_code = ?, card_last4 = ?, card_expiry = ? WHERE customer_id = ?');
+$stmt = $conn->prepare('UPDATE users SET first_name = ?, last_name = ?, address = ?, city = ?, postal_code = ?, card_last4 = ?, card_expiry = ?' . ($password_hash ? ', password = ?' : '') . ' WHERE customer_id = ?');
 if (!$stmt) {
     handleError('Prepare failed: ' . $conn->error, 500);
 }
 
-$stmt->bind_param('sssssssi', $first_name, $last_name, $address, $city, $postal_code, $card_last4, $expiry, $customerId);
+if ($password_hash) {
+    $stmt->bind_param('sssssssssi', $first_name, $last_name, $address, $city, $postal_code, $card_last4, $expiry, $password_hash, $customerId);
+} else {
+    $stmt->bind_param('sssssssi', $first_name, $last_name, $address, $city, $postal_code, $card_last4, $expiry, $customerId);
+}
 
 if (!$stmt->execute()) {
     handleError('Failed to update profile: ' . $stmt->error, 500);

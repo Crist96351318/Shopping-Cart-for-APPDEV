@@ -10,10 +10,13 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .profile-container {
-            max-width: 720px;
+            max-width: 1200px;
             margin: 60px auto;
             padding: 0 24px;
             min-height: 60vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
         }
         .profile-box {
             background: var(--cream);
@@ -73,7 +76,11 @@
             width: 100%;
             margin-top: 12px;
         }
-        @media (max-width: 768px) {
+        @media (max-width: 968px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
             .form-row {
                 grid-template-columns: 1fr;
             }
@@ -124,8 +131,7 @@
 <main class="profile-container">
     <div class="profile-box">
         <h2 class="profile-title">Profile</h2>
-        <p class="profile-subtitle">Update your shipping address and payment details so checkout is fast and seamless.</p>
-
+        <p class="profile-subtitle">Manage your personal information and preferences.</p>
         <form id="profileForm">
             <div class="form-section">
                 <h3 class="form-section-title">Personal Information</h3>
@@ -144,11 +150,32 @@
                     <input type="email" name="email" readonly>
                 </div>
             </div>
-
+            <div class="form-section">
+                <h3 class="form-section-title">Change Password</h3>
+                <div class="form-group">
+                    <label>Old Password</label>
+                    <input type="password" name="old_password" placeholder="Enter your current password">
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" name="new_password" placeholder="Enter your new password">
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" name="confirm_password" placeholder="Confirm your new password">
+                </div>
+            </div>
+            <button type="submit" class="btn-primary save-btn">Save Profile</button>
+        </form>
+    </div>
+    <div class="profile-box">
+        <h2 class="profile-title">Shipping & Payment</h2>
+        <p class="profile-subtitle">Update your shipping address and payment details so checkout is fast and seamless.</p>
+        <form id="shippingForm">
             <div class="form-section">
                 <h3 class="form-section-title">Shipping Address</h3>
                 <div class="form-group">
-                    <label>Street Address</label>
+                    <label>Shipping Address</label>
                     <input type="text" name="address" placeholder="123 Main Street" required>
                 </div>
                 <div class="form-row">
@@ -162,7 +189,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="form-section">
                 <h3 class="form-section-title">Payment Information</h3>
                 <div class="form-group">
@@ -177,8 +203,7 @@
                 </div>
                 <p class="profile-note">Only the last 4 digits of your card are stored here for checkout convenience.</p>
             </div>
-
-            <button type="submit" class="btn-primary save-btn">Save Profile</button>
+            <button type="submit" class="btn-primary save-btn">Save Shipping & Payment</button>
         </form>
     </div>
 </main>
@@ -197,5 +222,144 @@
 
 <script src="script.js"></script>
 
-</body>
-</html>
+<script>
+// Load user profile data
+async function loadUserProfile() {
+    try {
+        const response = await fetch('../backend/user.php');
+        
+        if (!response.ok) {
+            if (response.status === 401) {
+                window.location.href = 'login.php';
+                return;
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.user) {
+            const user = data.user;
+            
+            // Safe element setter function
+            const setInputValue = (selector, value) => {
+                const element = document.querySelector(selector);
+                if (element && value !== null && value !== undefined) {
+                    element.value = value;
+                }
+            };
+            
+            // Populate profile form
+            setInputValue('input[name="first_name"]', user.first_name);
+            setInputValue('input[name="last_name"]', user.last_name);
+            setInputValue('input[name="email"]', user.email);
+            
+            // Populate shipping form
+            setInputValue('input[name="address"]', user.address);
+            setInputValue('input[name="city"]', user.city);
+            setInputValue('input[name="postal_code"]', user.postal_code);
+            
+            // Mask card number if it exists
+            const cardInput = document.querySelector('input[name="card_number"]');
+            if (cardInput && user.card_last4) {
+                cardInput.value = '•••• •••• •••• ' + user.card_last4;
+                cardInput.placeholder = 'Enter new card or leave blank to keep current';
+            }
+            
+            setInputValue('input[name="expiry"]', user.card_expiry);
+        } else if (data.message && data.message.includes('logged in')) {
+            window.location.href = 'login.php';
+        }
+    } catch (error) {
+        console.error('Error loading profile:', error);
+        alert('Failed to load profile. Please try again.');
+    }
+}
+
+// Initialize event listeners when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Load profile data
+    loadUserProfile();
+    
+    // Handle profile form submission
+    const profileForm = document.getElementById('profileForm');
+    if (profileForm) {
+        profileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const firstNameEl = document.querySelector('input[name="first_name"]');
+            const lastNameEl = document.querySelector('input[name="last_name"]');
+            const oldPasswordEl = document.querySelector('input[name="old_password"]');
+            const newPasswordEl = document.querySelector('input[name="new_password"]');
+            const confirmPasswordEl = document.querySelector('input[name="confirm_password"]');
+            
+            if (firstNameEl) formData.append('first_name', firstNameEl.value);
+            if (lastNameEl) formData.append('last_name', lastNameEl.value);
+            if (oldPasswordEl) formData.append('old_password', oldPasswordEl.value);
+            if (newPasswordEl) formData.append('new_password', newPasswordEl.value);
+            if (confirmPasswordEl) formData.append('confirm_password', confirmPasswordEl.value);
+            
+            try {
+                const response = await fetch('../backend/update_profile.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Profile updated successfully!');
+                    // Clear password fields
+                    if (oldPasswordEl) oldPasswordEl.value = '';
+                    if (newPasswordEl) newPasswordEl.value = '';
+                    if (confirmPasswordEl) confirmPasswordEl.value = '';
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to update profile'));
+                }
+            } catch (error) {
+                alert('Error updating profile: ' + error.message);
+            }
+        });
+    }
+    
+    // Handle shipping form submission
+    const shippingForm = document.getElementById('shippingForm');
+    if (shippingForm) {
+        shippingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const addressEl = document.querySelector('input[name="address"]');
+            const cityEl = document.querySelector('input[name="city"]');
+            const postalCodeEl = document.querySelector('input[name="postal_code"]');
+            const cardNumberEl = document.querySelector('input[name="card_number"]');
+            const expiryEl = document.querySelector('input[name="expiry"]');
+            
+            if (addressEl) formData.append('address', addressEl.value);
+            if (cityEl) formData.append('city', cityEl.value);
+            if (postalCodeEl) formData.append('postal_code', postalCodeEl.value);
+            if (cardNumberEl) formData.append('card_number', cardNumberEl.value);
+            if (expiryEl) formData.append('expiry', expiryEl.value);
+            
+            try {
+                const response = await fetch('../backend/update_profile.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Shipping and payment information updated successfully!');
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to update shipping information'));
+                }
+            } catch (error) {
+                alert('Error updating shipping information: ' + error.message);
+            }
+        });
+    }
+});
+</script>
+
