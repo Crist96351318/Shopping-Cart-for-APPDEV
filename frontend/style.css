@@ -604,3 +604,111 @@
     /* object-fit: cover; */ /* Scale image to fill the space, maintaining aspect ratio but potentially cropping if aspect ratio differs */
     display: block; /* Ensure correct block-level rendering */
 }
+
+/* ── NOTIFICATIONS ── */
+.notification-wrapper {
+  display: inline-flex;
+  align-items: center;
+}
+
+.notification-btn {
+  transition: color 0.2s;
+}
+
+.notification-btn:hover {
+  color: var(--brown);
+}
+
+.notification-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #cc3333;
+  color: white;
+  border-radius: 50%;
+  font-size: 9px;
+  font-weight: 500;
+  width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: calc(100% + 15px);
+  right: -10px;
+  background-color: var(--cream);
+  min-width: 300px;
+  border: 1px solid var(--sand);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  display: none;
+  z-index: 200;
+}
+
+/* Triangle pointer */
+.notification-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 15px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--cream);
+  border-top: 1px solid var(--sand);
+  border-left: 1px solid var(--sand);
+  transform: rotate(45deg);
+}
+
+.notification-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--sand);
+  font-family: var(--serif);
+  color: var(--dark);
+}
+
+.notification-header h4 {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.notification-list {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--sand);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.notification-item:hover {
+  background-color: var(--sand);
+}
+
+.notification-item.unread {
+  background-color: rgba(232, 223, 211, 0.4); /* Highlight unread items slightly */
+}
+
+.notification-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--dark);
+  margin-bottom: 4px;
+}
+
+.notification-message {
+  font-size: 11px;
+  color: var(--text);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.notification-time {
+  font-size: 9.5px;
+  color: var(--taupe);
+  text-transform: uppercase;
+}

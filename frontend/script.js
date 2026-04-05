@@ -116,10 +116,9 @@ async function getProducts() {
     return await apiRequest('get_products.php');
 }
 
-async function checkout(selectedIds = []) {
+async function checkout() {
     return await apiRequest('checkout.php', {
-        method: 'POST',
-        body: JSON.stringify({ selected_product_ids: selectedIds })
+        method: 'POST'
     });
 }
 
@@ -141,17 +140,6 @@ async function handleAddToCart(productId) {
     }
 }
 
-async function handleBuyNow(productId) {
-    try {
-        const data = await addToCart(productId);
-        updateCartCount(data.cart.count);
-        // Redirect the user to the cart page immediately
-        window.location.href = 'cart.php'; 
-    } catch (error) {
-        showMessage('Failed to process Buy Now: ' + error.message);
-    }
-}
-
 async function loadCart() {
     try {
         const data = await getCart();
@@ -166,12 +154,12 @@ function renderCart(cart) {
     const subtotalEl = document.getElementById('subtotal');
     const totalEl = document.getElementById('total');
     
-    if (!tbody) return; 
+    if (!tbody) return; // Not on cart page
     
     tbody.innerHTML = '';
     
     if (!cart.items || cart.items.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">Your cart is empty</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">Your cart is empty</td></tr>';
         if (subtotalEl) subtotalEl.textContent = '$0.00';
         if (totalEl) totalEl.textContent = '$0.00';
         return;
@@ -180,7 +168,6 @@ function renderCart(cart) {
     cart.items.forEach(item => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td><input type="checkbox" class="item-select-checkbox" data-id="${item.product_id}" checked onchange="updateCartTotals()"></td>
             <td>
                 <div class="cart-item-info">
                     <img src="${item.image_path || '../assets/placeholder.png'}" class="cart-item-img" alt="${item.name}">
@@ -191,42 +178,16 @@ function renderCart(cart) {
                 </div>
             </td>
             <td><input type="number" class="qty-input" value="${item.quantity}" min="1" onchange="updateQuantity(${item.product_id}, this.value)"></td>
-            <td class="item-price" data-price="${item.price}">$${item.price.toFixed(2)}</td>
+            <td>$${item.price.toFixed(2)}</td>
             <td>$${(item.price * item.quantity).toFixed(2)}</td>
             <td><button class="remove-btn" onclick="removeItem(${item.product_id})">Remove</button></td>
         `;
         tbody.appendChild(row);
     });
     
-    updateCartTotals();
+    if (subtotalEl) subtotalEl.textContent = `$${cart.total.toFixed(2)}`;
+    if (totalEl) totalEl.textContent = `$${cart.total.toFixed(2)}`;
 }
-
-window.updateCartTotals = function() {
-    const checkboxes = document.querySelectorAll('.item-select-checkbox');
-    let subtotal = 0;
-    
-    checkboxes.forEach(cb => {
-        if (cb.checked) {
-            const row = cb.closest('tr');
-            const qty = parseInt(row.querySelector('.qty-input').value);
-            const price = parseFloat(row.querySelector('.item-price').dataset.price);
-            subtotal += (qty * price);
-        }
-    });
-    
-    const subtotalEl = document.getElementById('subtotal');
-    const totalEl = document.getElementById('total');
-    if (subtotalEl) subtotalEl.textContent = '$' + subtotal.toFixed(2);
-    if (totalEl) totalEl.textContent = '$' + subtotal.toFixed(2);
-};
-
-window.toggleAllCartItems = function(source) {
-    const checkboxes = document.querySelectorAll('.item-select-checkbox');
-    checkboxes.forEach(cb => {
-        cb.checked = source.checked;
-    });
-    updateCartTotals();
-};
 
 async function updateQuantity(productId, quantity) {
     try {
@@ -296,16 +257,6 @@ function renderProducts(products) {
 async function loadCheckoutSummary() {
     try {
         const data = await getCart();
-        const selectedIdsStr = localStorage.getItem('selectedCheckoutItems');
-        
-        if (selectedIdsStr) {
-            const selectedIds = JSON.parse(selectedIdsStr);
-            // Filter cart items to match the user's selection
-            data.cart.items = data.cart.items.filter(item => selectedIds.includes(item.product_id));
-            // Recalculate cart total purely for the selected items
-            data.cart.total = data.cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        }
-        
         renderCheckoutSummary(data.cart);
     } catch (error) {
         showMessage('Failed to load checkout summary: ' + error.message);
@@ -339,41 +290,10 @@ function renderCheckoutSummary(cart) {
     if (totalEl) totalEl.textContent = `$${cart.total.toFixed(2)}`;
 }
 
-// Fires when clicking "Proceed to Checkout" in cart
 async function handleCheckout() {
-    const checkboxes = document.querySelectorAll('.item-select-checkbox:checked');
-    const isCartPage = document.getElementById('cartItems') !== null;
-
-    if (isCartPage) {
-        const selectedIds = Array.from(checkboxes).map(cb => parseInt(cb.dataset.id));
-        
-        if (selectedIds.length === 0) {
-            showMessage('Please select at least one item to checkout.');
-            return;
-        }
-        
-        // Save selected items locally to fetch on the checkout screen
-        localStorage.setItem('selectedCheckoutItems', JSON.stringify(selectedIds));
-        window.location.href = 'checkout.php';
-    } else {
-        window.location.href = 'checkout.php';
-    }
-}
-
-// Fires when hitting "Place Order" on the checkout form
-async function handleCheckoutSubmit(event) {
-    event.preventDefault();
-    
-    const selectedIdsStr = localStorage.getItem('selectedCheckoutItems');
-    let selectedIds = [];
-    if (selectedIdsStr) {
-        selectedIds = JSON.parse(selectedIdsStr);
-    }
-    
     try {
-        const data = await checkout(selectedIds);
+        const data = await checkout();
         showMessage('Order placed successfully!');
-        localStorage.removeItem('selectedCheckoutItems'); // Clear memory
         window.location.href = `order_confirmation.php?order_id=${data.order_id}`;
     } catch (error) {
         showMessage('Checkout failed: ' + error.message);
@@ -547,6 +467,7 @@ function renderOrderConfirmation(order) {
 function updateAccountDropdown(user) {
     const dropdownName = document.querySelector('.dropdown-name');
     const cartBtn = document.querySelector('.cart-btn');
+    const notificationWrapper = document.getElementById('notificationWrapper'); // ADDED
     const loginLink = document.querySelector('.dropdown-item[href="login.php"]');
     const registerLink = document.querySelector('.dropdown-item[href="register.php"]');
     const divider = document.querySelector('.dropdown-divider');
@@ -558,6 +479,11 @@ function updateAccountDropdown(user) {
 
     if (cartBtn) {
         cartBtn.style.display = user ? 'inline-flex' : 'none';
+    }
+    
+    // ADDED: Toggle notification bell visibility exactly like the cart button
+    if (notificationWrapper) {
+        notificationWrapper.style.display = user ? 'inline-flex' : 'none';
     }
 
     if (user) {
@@ -659,6 +585,8 @@ function updateCartCount(count) {
     }
 }
 
+let notificationInterval; // ADDED
+
 async function checkSession() {
     if (isLoggedIn()) {
         try {
@@ -669,15 +597,23 @@ async function checkSession() {
             // Also update cart count
             const cartData = await getCart();
             updateCartCount(cartData.cart.count);
+            
+            // ADDED: Initialize Notifications
+            loadNotifications();
+            if (notificationInterval) clearInterval(notificationInterval);
+            notificationInterval = setInterval(loadNotifications, 30000); // Check for new updates every 30 seconds
+            
         } catch (error) {
             // Session invalid, clear local state
             clearLocalUser();
             updateAccountDropdown(null);
             updateCartCount(0);
+            if (notificationInterval) clearInterval(notificationInterval); // ADDED
         }
     } else {
         updateAccountDropdown(null);
         updateCartCount(0);
+        if (notificationInterval) clearInterval(notificationInterval); // ADDED
     }
 }
 
@@ -849,7 +785,31 @@ document.addEventListener("DOMContentLoaded", () => {
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', handleCheckoutSubmit);
     }
-    
+});
+
+async function handleAddToCart(productId) {
+    try {
+        const data = await addToCart(productId);
+        updateCartCount(data.cart.count);
+        showMessage('Product added to cart!');
+    } catch (error) {
+        showMessage('Failed to add to cart: ' + error.message);
+    }
+}
+
+// Add this new function:
+async function handleBuyNow(productId) {
+    try {
+        const data = await addToCart(productId);
+        updateCartCount(data.cart.count);
+        // Redirect the user to the cart page immediately
+        window.location.href = 'cart.php'; 
+    } catch (error) {
+        showMessage('Failed to process Buy Now: ' + error.message);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
     // Check the URL for the 'category' parameter
     const urlParams = new URLSearchParams(window.location.search);
     const categoryParam = urlParams.get('category');
@@ -870,5 +830,101 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         }
+    }
+});
+
+// ADDED: Notification Logic
+async function loadNotifications() {
+    const user = getLocalUser();
+    if (!user) return;
+    
+    try {
+        const response = await fetch(`${API_BASE}get_notifications.php?user_id=${user.customer_id}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            renderNotifications(data.notifications);
+        }
+    } catch (error) {
+        console.error('Failed to load notifications:', error);
+    }
+}
+
+function renderNotifications(notifications) {
+    const list = document.getElementById('notificationList');
+    const badge = document.getElementById('notificationBadge');
+    
+    if (!list || !badge) return;
+    
+    list.innerHTML = '';
+    
+    const unreadCount = notifications.filter(n => !n.read).length;
+    
+    if (unreadCount > 0) {
+        badge.textContent = unreadCount;
+        badge.style.display = 'flex';
+    } else {
+        badge.style.display = 'none';
+    }
+    
+    if (notifications.length === 0) {
+        list.innerHTML = '<div style="padding: 20px; text-align: center; font-size: 12px; color: var(--taupe);">No notifications yet</div>';
+        return;
+    }
+    
+    notifications.forEach(notif => {
+        const item = document.createElement('div');
+        item.className = `notification-item ${notif.read ? 'read' : 'unread'}`;
+        
+        const date = new Date(notif.created_at).toLocaleString();
+        
+        item.innerHTML = `
+            <div class="notification-title">${notif.title}</div>
+            <div class="notification-message">${notif.message}</div>
+            <div class="notification-time">${date}</div>
+        `;
+        
+        item.onclick = async () => {
+            if (!notif.read) {
+                await markNotificationRead(notif.id);
+            }
+            // Navigate the user to their order history when they click it
+            window.location.href = 'order_history.php';
+        };
+        
+        list.appendChild(item);
+    });
+}
+
+async function markNotificationRead(notificationId) {
+    try {
+        await fetch(`${API_BASE}mark_notification_read.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ notification_id: notificationId })
+        });
+        loadNotifications(); // Reload to update the badge count
+    } catch (error) {
+        console.error('Failed to mark notification as read:', error);
+    }
+}
+
+// Ensure the dropdown toggles securely
+document.addEventListener("DOMContentLoaded", () => {
+    const notificationBtn = document.getElementById('notificationBtn');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    
+    if (notificationBtn && notificationDropdown) {
+        notificationBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notificationDropdown.style.display = notificationDropdown.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        // Hide if clicking outside
+        document.addEventListener('click', (e) => {
+            if (!notificationDropdown.contains(e.target) && e.target !== notificationBtn) {
+                notificationDropdown.style.display = 'none';
+            }
+        });
     }
 });

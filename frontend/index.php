@@ -31,11 +31,11 @@
       <a href="fragrances.php">Fragrances</a>
     </nav>
     <div class="logo">le parfum </div>
-    <div class="header-actions">
+   <div class="header-actions">
   <button class="cart-btn" onclick="window.location.href='cart.php'">
-  Cart
-  <span class="cart-count">0</span>
-</button>
+    Cart
+    <span class="cart-count">0</span>
+  </button>
 
   <div class="account-dropdown-wrapper">
     <button id="accountBtn" style="font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text);">Account</button>
@@ -50,6 +50,23 @@
         <hr class="dropdown-divider">
         <a href="#" class="dropdown-item logout-link" onclick="return false;">Logout</a>
       </div>
+    </div>
+  </div>
+  <div class="notification-wrapper" id="notificationWrapper" style="display: none; position: relative; margin-right: 15px;">
+    <button id="notificationBtn" class="notification-btn" style="background: none; border: none; cursor: pointer; color: var(--text); position: relative; display: flex; align-items: center;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+      </svg>
+      <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+    </button>
+    
+    <div id="notificationDropdown" class="notification-dropdown">
+      <div class="notification-header">
+        <h4>Notifications</h4>
+      </div>
+      <div class="notification-list" id="notificationList">
+        </div>
     </div>
   </div>
 </div>
