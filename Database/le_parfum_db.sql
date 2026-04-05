@@ -81,6 +81,20 @@ CREATE TABLE IF NOT EXISTS admin_users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS notifications (
+    notification_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    order_id INT,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    `read` TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES users(customer_id),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    INDEX (customer_id),
+    INDEX (created_at)
+);
+
     -- Default store admin
     INSERT INTO admin_users (username, email, password)
     VALUES ('admin', 'admin@gmail.com', '$2y$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36DXs7FG')
@@ -118,11 +132,11 @@ INSERT INTO products (category_id, name, description, price, stock_quantity, ima
 ((SELECT category_id FROM categories WHERE name = 'Eau Fraiche'), 'Chanel Eau Fraîche', 'A light and refreshing citrus fragrance perfect for everyday wear', 75.00, 45, '../assets/cat5.png'),
 
 -- Additional sample products for variety
-((SELECT category_id FROM categories WHERE name = 'Eau de Parfum'), 'Dior Sauvage', 'A fresh and spicy masculine fragrance with pepper and lavender', 110.00, 28, '../assets/sauvage.png'),
-((SELECT category_id FROM categories WHERE name = 'Eau de Parfum'), 'Yves Saint Laurent Black Opium', 'An addictive oriental vanilla fragrance with coffee and white flowers', 125.00, 22, '../assets/black-opium.png'),
-((SELECT category_id FROM categories WHERE name = 'Eau de Toilette'), 'Acqua di Parma Colonia', 'A classic Italian citrus cologne with Sicilian lemon and orange', 85.00, 38, '../assets/colonia.png'),
-((SELECT category_id FROM categories WHERE name = 'Eau de Toilette'), 'Tom Ford Oud Wood', 'A luxurious woody fragrance with rare oud and sandalwood', 180.00, 15, '../assets/oud-wood.png'),
-((SELECT category_id FROM categories WHERE name = 'Eau de Cologne'), 'Penhaligons Lily of the Valley', 'A delicate floral cologne with lily of the valley and rose', 95.00, 20, '../assets/lily-valley.png')
+((SELECT category_id FROM categories WHERE name = 'Eau de Parfum'), 'Dior Sauvage', 'A fresh and spicy masculine fragrance with pepper and lavender', 110.00, 28, '../assets/cat6.png'),
+((SELECT category_id FROM categories WHERE name = 'Eau de Parfum'), 'Yves Saint Laurent Black Opium', 'An addictive oriental vanilla fragrance with coffee and white flowers', 125.00, 22, '../assets/cat7.png'),
+((SELECT category_id FROM categories WHERE name = 'Eau de Toilette'), 'Acqua di Parma Colonia', 'A classic Italian citrus cologne with Sicilian lemon and orange', 85.00, 38, '../assets/cat8.png'),
+((SELECT category_id FROM categories WHERE name = 'Eau de Toilette'), 'Tom Ford Oud Wood', 'A luxurious woody fragrance with rare oud and sandalwood', 180.00, 15, '../assets/cat9.png'),
+((SELECT category_id FROM categories WHERE name = 'Eau de Cologne'), 'Penhaligons Lily of the Valley', 'A delicate floral cologne with lily of the valley and rose', 95.00, 20, '../assets/cat10.png')
 ON DUPLICATE KEY UPDATE name = name;
 
 -- Set primary images for products
@@ -132,9 +146,9 @@ INSERT INTO product_images (product_id, image_path, is_primary) VALUES
 ((SELECT product_id FROM products WHERE name = 'Gucci Bloom' LIMIT 1), '../assets/cat3.png', 1),
 ((SELECT product_id FROM products WHERE name = 'Jo Malone London' LIMIT 1), '../assets/cat4.png', 1),
 ((SELECT product_id FROM products WHERE name = 'Chanel Eau Fraîche' LIMIT 1), '../assets/cat5.png', 1),
-((SELECT product_id FROM products WHERE name = 'Dior Sauvage' LIMIT 1), '../assets/sauvage.png', 1),
-((SELECT product_id FROM products WHERE name = 'Yves Saint Laurent Black Opium' LIMIT 1), '../assets/black-opium.png', 1),
-((SELECT product_id FROM products WHERE name = 'Acqua di Parma Colonia' LIMIT 1), '../assets/colonia.png', 1),
-((SELECT product_id FROM products WHERE name = 'Tom Ford Oud Wood' LIMIT 1), '../assets/oud-wood.png', 1),
-((SELECT product_id FROM products WHERE name = 'Penhaligons Lily of the Valley' LIMIT 1), '../assets/lily-valley.png', 1)
+((SELECT product_id FROM products WHERE name = 'Dior Sauvage' LIMIT 1), '../assets/cat6.png', 1),
+((SELECT product_id FROM products WHERE name = 'Yves Saint Laurent Black Opium' LIMIT 1), '../assets/cat7.png', 1),
+((SELECT product_id FROM products WHERE name = 'Acqua di Parma Colonia' LIMIT 1), '../assets/cat8.png', 1),
+((SELECT product_id FROM products WHERE name = 'Tom Ford Oud Wood' LIMIT 1), '../assets/cat9.png', 1),
+((SELECT product_id FROM products WHERE name = 'Penhaligons Lily of the Valley' LIMIT 1), '../assets/cat10.png', 1)
 ON DUPLICATE KEY UPDATE is_primary = 1;

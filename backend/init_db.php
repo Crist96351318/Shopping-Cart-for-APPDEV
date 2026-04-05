@@ -34,6 +34,16 @@ $sql2 = "CREATE TABLE IF NOT EXISTS products (
     FOREIGN KEY (category_id) REFERENCES categories(category_id)
 )";
 
+// 2.5. Create Product Images Table
+$sql2_5 = "CREATE TABLE IF NOT EXISTS product_images (
+    image_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    image_path VARCHAR(255) NOT NULL,
+    is_primary TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+)";
+
 // 3. Create Users Table
 $sql3 = "CREATE TABLE IF NOT EXISTS users (
     customer_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -91,7 +101,22 @@ $sql7 = "CREATE TABLE IF NOT EXISTS admin_users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 
-$tables = [$sql1, $sql2, $sql3, $sql4, $sql5, $sql6, $sql7];
+// 8. Create Notifications Table
+$sql8 = "CREATE TABLE IF NOT EXISTS notifications (
+    notification_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    order_id INT,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    `read` TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES users(customer_id),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    INDEX (customer_id),
+    INDEX (created_at)
+)";
+
+$tables = [$sql1, $sql2, $sql2_5, $sql3, $sql4, $sql5, $sql6, $sql7, $sql8];
 
 foreach($tables as $k => $sql) {
     if ($conn->query($sql) === TRUE) {
