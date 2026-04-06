@@ -171,6 +171,47 @@
 
     .error { color: #cc6666; }
     .no-products { color: var(--brown); }
+
+    /* Stock display styles */
+    .product-stock {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-top: 8px;
+        font-weight: 500;
+    }
+    .stock-in { color: var(--brown); }
+    .stock-out { color: #cc6666; }
+
+    /* Out of stock overlay */
+    .out-of-stock-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(204, 102, 102, 0.9);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        z-index: 10;
+    }
+
+    /* Out of stock product card styling */
+    .product-card.out-of-stock {
+        opacity: 0.7;
+    }
+    .product-card.out-of-stock .add-cart {
+        background: #ccc !important;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+    .product-card.out-of-stock .add-cart:hover {
+        background: #ccc !important;
+    }
 </style>
 <script>
 function toggleCategory(id, categoryName) {
@@ -222,19 +263,30 @@ function renderCategoryProducts(container, products) {
         return;
     }
 
-    const html = products.map(product => `
-        <div class="product-card">
+    const html = products.map(product => {
+        const imgSrc = product.image_path ? (product.image_path.startsWith('../') ? product.image_path : `../${product.image_path}`) : '../assets/placeholder.png';
+        const stockQuantity = parseInt(product.stock_quantity) || 0;
+        const isOutOfStock = stockQuantity <= 0;
+        const stockText = isOutOfStock ? 'Out of Stock' : `${stockQuantity} in stock`;
+        const stockClass = isOutOfStock ? 'stock-out' : 'stock-in';
+        const buttonDisabled = isOutOfStock ? 'disabled' : '';
+
+        return `
+        <div class="product-card ${isOutOfStock ? 'out-of-stock' : ''}">
             <div class="product-img-wrap" style="height: 250px; display: flex; justify-content: center; align-items: center; overflow: hidden; background: #f9f9f9;">
-                <img src="${product.image_path || '../assets/placeholder.png'}" class="product-img" alt="${product.name}" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;">
+                <img src="${imgSrc}" class="product-img" alt="${product.name}" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; ${isOutOfStock ? 'opacity: 0.5;' : ''}">
+                ${isOutOfStock ? '<div class="out-of-stock-overlay">Out of Stock</div>' : ''}
                 <div class="product-actions">
-                    <button class="add-cart" style="width: 100%;" onclick="handleBuyNow(${product.product_id})">Buy Now</button>
-                    <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(${product.product_id})">Add to Cart</button>
+                    <button class="add-cart" style="width: 100%;" onclick="handleBuyNow(${product.product_id})" ${buttonDisabled}>Buy Now</button>
+                    <button class="add-cart" style="width: 100%;" onclick="handleAddToCart(${product.product_id})" ${buttonDisabled}>Add to Cart</button>
                 </div>
             </div>
             <div class="product-name">${product.name}</div>
             <div class="product-price">$${parseFloat(product.price).toFixed(2)}</div>
+            <div class="product-stock ${stockClass}">${stockText}</div>
         </div>
-    `).join('');
+    `;
+    }).join('');
 
     container.innerHTML = html;
 }

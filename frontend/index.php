@@ -266,8 +266,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (index === 0) badge = '<span class="badge-new">New</span>';
                 if (index === 1) badge = '<span class="badge-sale">Sale</span>';
                 
-                // Adjust path depending on what get_products.php returns
-                const imgSrc = product.image_path ? `../${product.image_path}` : '../assets/placeholder.png';
+                // Image path is already prefixed with 'assets/' from backend
+                const imgSrc = product.image_path.startsWith('../') ? product.image_path : `../${product.image_path}`;
                 
                 return `
                 <div class="product-card">

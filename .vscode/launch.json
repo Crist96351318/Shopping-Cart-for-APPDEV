@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch",
+            "type": "pwa-chrome",
+            "request": "launch",
+            "program": "${http://localhost/appdev/Shopping-Cart-for-APPDEV/frontend/}",
+            "runtimeExecutable": "/usr/bin/brave",
+        }
+    ]
+}

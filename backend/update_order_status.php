@@ -2,6 +2,7 @@
 require_once 'config.php';
 require_once 'db_connection.php';
 require_once 'functions.php';
+require_once 'notification_helper.php';
 
 // Check admin access
 $user = getLoggedInUser($conn);
@@ -36,6 +37,9 @@ $stmt = $conn->prepare('UPDATE orders SET status = ? WHERE order_id = ?');
 $stmt->bind_param('si', $status, $order_id);
 
 if ($stmt->execute()) {
+    // Send notification to customer about status update
+    notifyOrderStatusUpdate($conn, $order_id, $status);
+    
     jsonResponse([
         'success' => true,
         'message' => 'Order status updated successfully',

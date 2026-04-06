@@ -849,7 +849,8 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
         }
 
         products.forEach(product => {
-            const imageHtml = product.image_path ? `<img src="${product.image_path}" alt="${product.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">` : 'No image';
+            const imgSrc = product.image_path ? (product.image_path.startsWith('../') ? product.image_path : `../${product.image_path}`) : '../assets/placeholder.png';
+            const imageHtml = product.image_path ? `<img src="${imgSrc}" alt="${product.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">` : 'No image';
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>#${product.product_id}</td>

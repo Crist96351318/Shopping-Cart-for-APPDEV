@@ -921,6 +921,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function handleAddToCart(productId) {
     try {
+        // Check if product is in stock before adding to cart
+        const products = await getProducts();
+        const product = products.products.find(p => p.product_id == productId);
+
+        if (!product || product.stock_quantity <= 0) {
+            showMessage('This product is currently out of stock.');
+            return;
+        }
+
         const data = await addToCart(productId);
         updateCartCount(data.cart.count);
         showMessage('Product added to cart!');
@@ -932,10 +941,19 @@ async function handleAddToCart(productId) {
 // Add this new function:
 async function handleBuyNow(productId) {
     try {
+        // Check if product is in stock before buying
+        const products = await getProducts();
+        const product = products.products.find(p => p.product_id == productId);
+
+        if (!product || product.stock_quantity <= 0) {
+            showMessage('This product is currently out of stock.');
+            return;
+        }
+
         const data = await addToCart(productId);
         updateCartCount(data.cart.count);
         // Redirect the user to the cart page immediately
-        window.location.href = 'cart.php'; 
+        window.location.href = 'cart.php';
     } catch (error) {
         showMessage('Failed to process Buy Now: ' + error.message);
     }
