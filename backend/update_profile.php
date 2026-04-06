@@ -23,16 +23,36 @@ if (!$payload) {
     $payload = $_POST;
 }
 
-$first_name = trim($payload['first_name'] ?? '');
-$last_name = trim($payload['last_name'] ?? '');
-$address = trim($payload['address'] ?? '');
-$city = trim($payload['city'] ?? '');
-$postal_code = trim($payload['postal_code'] ?? '');
-$card_number_input = trim($payload['card_number'] ?? '');
-$expiry = trim($payload['expiry'] ?? '');
-$old_password = trim($payload['old_password'] ?? '');
-$new_password = trim($payload['new_password'] ?? '');
-$confirm_password = trim($payload['confirm_password'] ?? '');
+$first_name = isset($payload['first_name']) ? trim($payload['first_name']) : null;
+$last_name = isset($payload['last_name']) ? trim($payload['last_name']) : null;
+$address = isset($payload['address']) ? trim($payload['address']) : null;
+$city = isset($payload['city']) ? trim($payload['city']) : null;
+$postal_code = isset($payload['postal_code']) ? trim($payload['postal_code']) : null;
+$card_number_input = isset($payload['card_number']) ? trim($payload['card_number']) : null;
+$expiry = isset($payload['expiry']) ? trim($payload['expiry']) : null;
+$old_password = isset($payload['old_password']) ? trim($payload['old_password']) : '';
+$new_password = isset($payload['new_password']) ? trim($payload['new_password']) : '';
+$confirm_password = isset($payload['confirm_password']) ? trim($payload['confirm_password']) : '';
+
+// Load current user row so missing fields can be preserved
+$stmt = $conn->prepare('SELECT first_name, last_name, address, city, postal_code, card_last4, card_expiry, password FROM users WHERE customer_id = ?');
+$stmt->bind_param('i', $customerId);
+$stmt->execute();
+$currentResult = $stmt->get_result();
+$currentUser = $currentResult->fetch_assoc();
+$stmt->close();
+
+if (!$currentUser) {
+    handleError('User not found', 404);
+}
+
+$first_name = $first_name !== null ? $first_name : $currentUser['first_name'];
+$last_name = $last_name !== null ? $last_name : $currentUser['last_name'];
+$address = $address !== null ? $address : $currentUser['address'];
+$city = $city !== null ? $city : $currentUser['city'];
+$postal_code = $postal_code !== null ? $postal_code : $currentUser['postal_code'];
+$expiry = $expiry !== null ? $expiry : $currentUser['card_expiry'];
+$card_last4 = $currentUser['card_last4'];
 
 // Handle password change if provided
 $password_hash = null;

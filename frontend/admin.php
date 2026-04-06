@@ -290,7 +290,8 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
                 <input type="text" name="category" placeholder="Category" required style="padding: 10px; border: 1px solid var(--taupe)">
                 <input type="number" name="price" placeholder="Price" step="0.01" min="0" required style="padding: 10px; border: 1px solid var(--taupe)">
                 <input type="number" name="stock_quantity" placeholder="Stock Quantity" min="0" required style="padding: 10px; border: 1px solid var(--taupe)">
-                <input type="url" name="image_path" placeholder="Primary Image URL" style="padding: 10px; border: 1px solid var(--taupe); grid-column: 1 / span 2;">
+                <input type="text" name="image_path" placeholder="assets/image-file.png" style="padding: 10px; border: 1px solid var(--taupe); grid-column: 1 / span 2;">
+                <div style="font-size: 12px; color: #5f5348; margin-bottom: 12px; grid-column: 1 / span 2;">Use a relative asset path like <code>assets/your-image.png</code></div>
                 <div style="grid-column: 1 / span 2;">
                     <label style="display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--brown); margin-bottom: 8px;">Add Image</label>
                     <div id="addAdditionalImages"></div>
@@ -966,21 +967,8 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
     }
 
     function promptEditProduct(productId) {
-        // Find the product data from the current table
-        const rows = document.querySelectorAll('#inventoryRows tr');
-        let productData = null;
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            if (cells.length > 0 && cells[0].textContent === `#${productId}`) {
-                productData = {
-                    id: productId,
-                    name: cells[2].textContent,
-                    category: cells[3].textContent,
-                    price: parseFloat(cells[4].textContent.replace('$', '')),
-                    stock: parseInt(cells[5].textContent)
-                };
-            }
-        });
+        // Find the product data from the loaded products list
+        const productData = adminProductData.find(p => p.product_id === productId);
 
         if (!productData) {
             alert('Product data not found');
@@ -1001,7 +989,7 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
                         </div>
                         <div style="margin-bottom: 10px;">
                             <label>Category:</label>
-                            <input type="text" name="category" value="${productData.category}" required style="width: 100%; padding: 8px;">
+                            <input type="text" name="category" value="${productData.category_name || ''}" required style="width: 100%; padding: 8px;">
                         </div>
                         <div style="margin-bottom: 10px;">
                             <label>Price:</label>
@@ -1009,15 +997,16 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
                         </div>
                         <div style="margin-bottom: 10px;">
                             <label>Stock:</label>
-                            <input type="number" name="stock_quantity" value="${productData.stock}" min="0" required style="width: 100%; padding: 8px;">
+                            <input type="number" name="stock_quantity" value="${productData.stock_quantity}" min="0" required style="width: 100%; padding: 8px;">
                         </div>
                         <div style="margin-bottom: 10px;">
-                            <label>Image URL:</label>
-                            <input type="url" name="image_path" placeholder="https://..." style="width: 100%; padding: 8px;">
+                            <label>Image Path:</label>
+                            <input type="text" name="image_path" value="${productData.image_path || ''}" placeholder="assets/your-image.png" style="width: 100%; padding: 8px;">
+                            <div style="font-size: 12px; color: #5f5348; margin-top: 6px;">Use the asset-relative path stored in products, for example <code>assets/filename.png</code>.</div>
                         </div>
                         <div style="margin-bottom: 10px;">
                             <label>Description:</label>
-                            <textarea name="description" style="width: 100%; padding: 8px; height: 60px;"></textarea>
+                            <textarea name="description" style="width: 100%; padding: 8px; height: 60px;">${productData.description || ''}</textarea>
                         </div>
                         <div style="margin-bottom: 10px;">
                             <label>Additional Images:</label>
@@ -1092,6 +1081,15 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
 
     function addImageFieldToAdd() {
         const container = document.getElementById('addAdditionalImages');
+        const div = document.createElement('div');
+        div.style.marginBottom = '5px';
+        div.innerHTML = '<input type="url" name="additional_images[]" placeholder="Additional image URL" style="width: 80%; padding: 5px;"><button type="button" onclick="this.parentNode.remove()" style="margin-left: 5px;">Remove</button>';
+        container.appendChild(div);
+    }
+
+    function addImageField() {
+        const container = document.getElementById('additionalImages');
+        if (!container) return;
         const div = document.createElement('div');
         div.style.marginBottom = '5px';
         div.innerHTML = '<input type="url" name="additional_images[]" placeholder="Additional image URL" style="width: 80%; padding: 5px;"><button type="button" onclick="this.parentNode.remove()" style="margin-left: 5px;">Remove</button>';

@@ -364,20 +364,28 @@ async function handleCheckout() {
 
 async function loadProfilePage() {
     const profileForm = document.getElementById('profileForm');
-    if (!profileForm) return;
+    const shippingForm = document.getElementById('shippingForm');
+    if (!profileForm && !shippingForm) return;
 
     try {
         const data = await getUser();
         const user = data.user || {};
 
-        profileForm.first_name.value = user.first_name || '';
-        profileForm.last_name.value = user.last_name || '';
-        profileForm.email.value = user.email || '';
-        profileForm.address.value = user.address || '';
-        profileForm.city.value = user.city || '';
-        profileForm.postal_code.value = user.postal_code || '';
-        profileForm.card_number.value = user.card_last4 ? `**** **** **** ${user.card_last4}` : '';
-        profileForm.expiry.value = user.card_expiry || '';
+        const setFieldValue = (form, name, value) => {
+            if (!form || !form.elements) return;
+            const field = form.elements[name];
+            if (field) field.value = value;
+        };
+
+        setFieldValue(profileForm, 'first_name', user.first_name || '');
+        setFieldValue(profileForm, 'last_name', user.last_name || '');
+        setFieldValue(profileForm, 'email', user.email || '');
+        setFieldValue(profileForm, 'card_number', user.card_last4 ? `**** **** **** ${user.card_last4}` : '');
+        setFieldValue(profileForm, 'expiry', user.card_expiry || '');
+
+        setFieldValue(shippingForm, 'address', user.address || '');
+        setFieldValue(shippingForm, 'city', user.city || '');
+        setFieldValue(shippingForm, 'postal_code', user.postal_code || '');
     } catch (error) {
         showMessage('Failed to load profile: ' + error.message);
     }
@@ -386,23 +394,30 @@ async function loadProfilePage() {
 async function handleProfileSave(event) {
     event.preventDefault();
     const form = event.target;
-    const cardNumberRaw = form.card_number.value || '';
+    const cardNumberRaw = form.elements['card_number'] ? form.elements['card_number'].value || '' : '';
     const cardDigits = cardNumberRaw.replace(/\D/g, '');
     const profileData = {
-        first_name: form.first_name.value,
-        last_name: form.last_name.value,
-        address: form.address.value,
-        city: form.city.value,
-        postal_code: form.postal_code.value,
-        card_number: cardDigits,
-        expiry: form.expiry.value
+        first_name: form.elements['first_name'] ? form.elements['first_name'].value : '',
+        last_name: form.elements['last_name'] ? form.elements['last_name'].value : '',
+        old_password: form.elements['old_password'] ? form.elements['old_password'].value : '',
+        new_password: form.elements['new_password'] ? form.elements['new_password'].value : '',
+        confirm_password: form.elements['confirm_password'] ? form.elements['confirm_password'].value : ''
     };
+
+    if (cardDigits) {
+        profileData.card_number = cardDigits;
+    }
+
+    const expiryValue = form.elements['expiry'] ? form.elements['expiry'].value.trim() : '';
+    if (expiryValue) {
+        profileData.expiry = expiryValue;
+    }
 
     try {
         const data = await updateProfile(profileData);
         if (data && data.user) {
             setLocalUser(data.user);
-            // Reload the form with updated data
+            // Reload the forms with updated data
             await loadProfilePage();
         }
         showMessage('Profile updated successfully!');
