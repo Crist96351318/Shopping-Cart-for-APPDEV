@@ -354,11 +354,29 @@ function renderCheckoutSummary(cart) {
 
 async function handleCheckout() {
     try {
+        const userData = await getUser();
+        const user = userData.user || {};
+
+        const hasAddress = user.address && typeof user.address === 'string' && user.address.trim().length > 0;
+        const hasCity = user.city && typeof user.city === 'string' && user.city.trim().length > 0;
+        const hasPostalCode = user.postal_code && typeof user.postal_code === 'string' && user.postal_code.trim().length > 0;
+
+        if (!hasAddress || !hasCity || !hasPostalCode) {
+            window.location.href = 'profile.php?tab=shipping&message=incomplete_profile';
+            return;
+        }
+
         const data = await checkout();
         showMessage('Order placed successfully!');
         window.location.href = `order_confirmation.php?order_id=${data.order_id}`;
     } catch (error) {
-        showMessage('Checkout failed: ' + error.message);
+        if (error.message && (error.message.includes('complete your Profile') || error.message.includes('address') || error.message.includes('payment'))) {
+            window.location.href = 'profile.php?tab=shipping&message=incomplete_profile';
+        } else if (error.message && error.message.includes('not logged in')) {
+            window.location.href = 'login.php';
+        } else {
+            showMessage('Checkout failed: ' + error.message);
+        }
     }
 }
 
@@ -429,19 +447,55 @@ async function handleProfileSave(event) {
 async function handleCheckoutSubmit(event) {
     event.preventDefault();
     
-    const selectedIdsStr = localStorage.getItem('selectedCheckoutItems');
-    let selectedIds = [];
-    if (selectedIdsStr) {
-        selectedIds = JSON.parse(selectedIdsStr);
-    }
-    
     try {
+        // First, check if user is logged in and has complete payment details
+        const userData = await getUser();
+        const user = userData.user || {};
+        
+        // Validate that user is logged in
+        if (!user || !user.customer_id) {
+            window.location.href = 'login.php';
+            return;
+        }
+        
+        // Check if all required fields are present for checkout
+        // Use strict checking - field must exist and have non-empty value after trim
+        const hasAddress = user.address && typeof user.address === 'string' && user.address.trim().length > 0;
+        const hasCity = user.city && typeof user.city === 'string' && user.city.trim().length > 0;
+        const hasPostalCode = user.postal_code && typeof user.postal_code === 'string' && user.postal_code.trim().length > 0;
+        const hasCardNumber = user.card_last4 && typeof user.card_last4 === 'string' && user.card_last4.trim().length > 0;
+        const hasExpiry = user.card_expiry && typeof user.card_expiry === 'string' && user.card_expiry.trim().length > 0;
+        
+        const hasCompleteDetails = hasAddress && hasCity && hasPostalCode && hasCardNumber && hasExpiry;
+        
+        // If details incomplete, redirect to profile WITHOUT showing error message
+        if (!hasCompleteDetails) {
+            localStorage.setItem('checkoutRedirectReason', 'incomplete');
+            window.location.href = 'profile.php?tab=shipping&message=incomplete_profile';
+            return;
+        }
+        
+        // Payment details are complete, proceed with checkout
+        const selectedIdsStr = localStorage.getItem('selectedCheckoutItems');
+        let selectedIds = [];
+        if (selectedIdsStr) {
+            selectedIds = JSON.parse(selectedIdsStr);
+        }
+        
         const data = await checkout(selectedIds);
         showMessage('Order placed successfully!');
         localStorage.removeItem('selectedCheckoutItems');
         window.location.href = `order_confirmation.php?order_id=${data.order_id}`;
     } catch (error) {
-        showMessage('Checkout failed: ' + error.message);
+        // Check if error is due to incomplete profile (API-level check)
+        if (error.message && (error.message.includes('complete your Profile') || error.message.includes('address') || error.message.includes('payment'))) {
+            localStorage.setItem('checkoutRedirectReason', 'incomplete');
+            window.location.href = 'profile.php?tab=shipping&message=incomplete_profile';
+        } else if (error.message && error.message.includes('not logged in')) {
+            window.location.href = 'login.php';
+        } else {
+            showMessage('Checkout failed: ' + error.message);
+        }
     }
 }
 

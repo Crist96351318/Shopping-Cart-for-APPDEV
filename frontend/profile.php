@@ -132,6 +132,10 @@
     <div class="profile-box">
         <h2 class="profile-title">Profile</h2>
         <p class="profile-subtitle">Manage your personal information and preferences.</p>
+        <div id="checkoutNotification" style="display:none; background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 16px; margin-bottom: 24px; color: #856404;">
+            <strong>⚠️ Complete Your Payment Details</strong><br>
+            Please fill in all shipping and payment details below to proceed with checkout.
+        </div>
         <form id="profileForm">
             <div class="form-section">
                 <h3 class="form-section-title">Personal Information</h3>
@@ -359,6 +363,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Error updating shipping information: ' + error.message);
             }
         });
+    }
+});
+
+// Show notification if redirected from checkout
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectReason = urlParams.get('message');
+    const tab = urlParams.get('tab');
+    const notification = document.getElementById('checkoutNotification');
+    
+    if (redirectReason === 'incomplete_profile' && notification) {
+        notification.style.display = 'block';
+        // Scroll to the shipping section
+        setTimeout(() => {
+            const shippingForm = document.getElementById('shippingForm');
+            if (shippingForm) {
+                shippingForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
+    }
+    
+    // Also handle tab parameter if shipping tab is requested
+    if (tab === 'shipping') {
+        const shippingForm = document.getElementById('shippingForm');
+        if (shippingForm) {
+            setTimeout(() => {
+                shippingForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
     }
 });
 </script>
